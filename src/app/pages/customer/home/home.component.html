@@ -1,0 +1,200 @@
+<app-header></app-header>
+
+<main class="home-layout">
+  <!-- Hero Section -->
+  <section class="hero-section animate-fade-in">
+    <div class="hero-content">
+      <div class="hero-badge">✨ Lo mejor de la repostería artesanal</div>
+      <h1>Personaliza tu Torta Perfecta</h1>
+      <p>Diseña tu torta con los sabores, pisos y decoración que más te gusten, o habla con nuestra pastelera virtual <strong>Yani</strong> para que te recomiende la ideal.</p>
+      <div class="hero-buttons">
+        <a routerLink="/chat" class="btn btn-primary btn-lg">🤖 Chatea con Yani AI</a>
+        <a href="#catalogo" class="btn btn-outline btn-lg">🍰 Explorar Catálogo</a>
+      </div>
+    </div>
+    <div class="hero-image-container">
+      <img src="https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234891/Torta_Matrimonial_qhxegx.png" alt="Torta Destacada" class="hero-cake" />
+    </div>
+  </section>
+
+  <!-- Products Catalog & Filters -->
+  <section id="catalogo" class="catalog-section">
+    <div class="catalog-header">
+      <h2>Nuestras Especialidades</h2>
+      
+      <!-- Search Input -->
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          placeholder="Buscar torta o postre..." 
+          [(ngModel)]="searchQuery"
+          class="form-control"
+        />
+      </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="category-tabs">
+      <button 
+        *ngFor="let cat of categories" 
+        (click)="selectCategory(cat)"
+        class="tab-btn"
+        [class.active]="selectedCategory() === cat"
+      >
+        {{ cat }}
+      </button>
+    </div>
+
+    <!-- Products Grid -->
+    <div *ngIf="productsService.isLoading()" class="loading-grid">
+      <div class="skeleton-card" *ngFor="let i of [1,2,3,4]"></div>
+    </div>
+
+    <div *ngIf="!productsService.isLoading() && filteredProducts().length === 0" class="empty-state">
+      <span class="empty-emoji">🧁</span>
+      <h3>No encontramos resultados</h3>
+      <p>Prueba buscando otra torta o cambia el filtro de categoría.</p>
+    </div>
+
+    <div *ngIf="!productsService.isLoading() && filteredProducts().length > 0" class="products-grid">
+      <div class="product-card card" *ngFor="let prod of filteredProducts()">
+        <div class="product-image-container">
+          <img [src]="prod.imagen" [alt]="prod.nombre" class="product-img" />
+          <span *ngIf="prod.badge" class="product-badge">{{ prod.badge }}</span>
+        </div>
+        <div class="product-details">
+          <div class="product-header">
+            <h3>{{ prod.nombre }}</h3>
+            <span class="rating">⭐️ {{ prod.rating }}</span>
+          </div>
+          <p class="desc">{{ prod.descripcion }}</p>
+          <div class="price-action">
+            <span class="price">Desde S/ {{ prod.precio }}</span>
+            <button (click)="openCustomizer(prod)" class="btn btn-primary btn-sm">
+              Personalizar 🎂
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Custom Cake Overlay Modal -->
+<div class="modal-overlay" *ngIf="selectedProduct() as product" (click)="closeCustomizer()">
+  <div class="modal-card animate-fade-in" (click)="$event.stopPropagation()">
+    <!-- Modal Close Button -->
+    <button class="close-btn" (click)="closeCustomizer()">✖️</button>
+
+    <!-- Modal Content Grid -->
+    <div class="modal-grid">
+      <!-- Cake Details / Preview -->
+      <div class="modal-preview">
+        <img [src]="product.imagen" [alt]="product.nombre" class="preview-img" />
+        <h3>{{ product.nombre }}</h3>
+        <p class="preview-desc">{{ product.descripcion }}</p>
+        
+        <div class="ingredients-list">
+          <strong>Ingredientes principales:</strong>
+          <span class="ingredient-badge" *ngFor="let ing of product.ingredientes">{{ ing }}</span>
+        </div>
+      </div>
+
+      <!-- Customization Form -->
+      <div class="modal-options">
+        <h3>Personaliza tu Pedido</h3>
+        <hr />
+
+        <!-- Size Selection -->
+        <div class="option-group">
+          <label>Tamaño:</label>
+          <div class="size-options">
+            <button 
+              *ngFor="let size of product.tamanios" 
+              (click)="selectedSize.set(size)"
+              class="size-btn"
+              [class.active]="selectedSize() === size"
+            >
+              {{ size === 'S' ? 'S (Pequeña)' : size === 'M' ? 'M (Mediana)' : size === 'L' ? 'L (Grande)' : 'XL (Familiar)' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Sabor/Bizcocho Selection -->
+        <div class="option-group">
+          <label for="sabor">Sabor del Bizcocho:</label>
+          <select id="sabor" class="form-control" [(ngModel)]="selectedSabor">
+            <option *ngFor="let sab of saboresList" [value]="sab">{{ sab }}</option>
+          </select>
+        </div>
+
+        <!-- Relleno Selection -->
+        <div class="option-group">
+          <label for="relleno">Sabor de Relleno:</label>
+          <select id="relleno" class="form-control" [(ngModel)]="selectedRelleno">
+            <option *ngFor="let rel of rellenosList" [value]="rel">{{ rel }}</option>
+          </select>
+        </div>
+
+        <!-- Decoration Options (Only for Cakes) -->
+        <ng-container *ngIf="isCakeProduct(product)">
+          <!-- Floors Counter -->
+          <div class="option-group">
+            <label>Cantidad de Pisos (+ S/30 por piso adicional):</label>
+            <div class="counter-control">
+              <button (click)="decreasePisos()" class="counter-btn" [disabled]="selectedPisos() <= 1">-</button>
+              <span class="counter-value">{{ selectedPisos() }}</span>
+              <button (click)="increasePisos()" class="counter-btn" [disabled]="selectedPisos() >= 5">+</button>
+            </div>
+          </div>
+
+          <!-- Color Selection -->
+          <div class="option-group">
+            <label for="color">Color de la Decoración (Fondant):</label>
+            <select id="color" class="form-control" [(ngModel)]="selectedColor">
+              <option *ngFor="let col of coloresList" [value]="col">{{ col }}</option>
+            </select>
+          </div>
+        </ng-container>
+
+        <!-- Message special -->
+        <div class="option-group">
+          <label for="mensaje">Mensaje en la Torta (Opcional):</label>
+          <input 
+            id="mensaje" 
+            type="text" 
+            class="form-control" 
+            placeholder="Ej: Feliz Cumpleaños Mamá" 
+            maxlength="40"
+            [(ngModel)]="mensajeDecoracion"
+          />
+        </div>
+
+        <hr />
+
+        <!-- Total Price and Add Button -->
+        <div class="purchase-panel">
+          <div class="price-summary">
+            <span class="label">Precio Unitario:</span>
+            <span class="total-price">S/ {{ currentCalculatedPrice() }}</span>
+          </div>
+
+          <div class="quantity-add">
+            <!-- Quantity Counter -->
+            <div class="counter-control">
+              <button (click)="decreaseQty()" class="counter-btn" [disabled]="customQuantity() <= 1">-</button>
+              <span class="counter-value">{{ customQuantity() }}</span>
+              <button (click)="increaseQty()" class="counter-btn" [disabled]="customQuantity() >= 20">+</button>
+            </div>
+            
+            <button (click)="addToCart()" class="btn btn-primary">
+              Agregar al Carrito 🛒
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

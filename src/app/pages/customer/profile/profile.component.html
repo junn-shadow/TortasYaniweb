@@ -1,0 +1,147 @@
+<app-header></app-header>
+
+<main class="profile-layout animate-fade-in">
+  <div class="profile-grid">
+    
+    <!-- Profile Card (Left) -->
+    <section class="profile-card-container">
+      <div class="profile-card card">
+        <div class="avatar-area">
+          <div class="avatar-wrapper">
+            <img 
+              [src]="authService.currentUser()?.fotoPerfil || 'https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234876/torta_de_vainilla_vgcfkf.png'" 
+              alt="Foto Perfil" 
+              class="profile-avatar"
+            />
+            <div class="avatar-upload-overlay" *ngIf="!avatarUploading()">
+              <span class="overlay-icon">📷</span>
+              <input type="file" accept="image/*" (change)="onAvatarSelected($event)" class="file-input" />
+            </div>
+            <div class="avatar-loader-overlay" *ngIf="avatarUploading()">
+              <span class="spinner"></span>
+            </div>
+          </div>
+          <h3>{{ authService.currentUser()?.nombre }}</h3>
+          <span class="role-tag">{{ authService.currentUser()?.rol === 'admin' ? '👑 Administrador' : '🧁 Cliente' }}</span>
+        </div>
+
+        <hr />
+
+        <!-- View mode -->
+        <div *ngIf="!isEditing()" class="profile-details-view">
+          <div *ngIf="successMessage()" class="alert alert-success mt-2">
+            {{ successMessage() }}
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-icon">✉️</span>
+            <div class="detail-text">
+              <span>Correo Electrónico</span>
+              <strong>{{ authService.currentUser()?.email }}</strong>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-icon">📞</span>
+            <div class="detail-text">
+              <span>Teléfono</span>
+              <strong>{{ authService.currentUser()?.telefono || '-' }}</strong>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-icon">📍</span>
+            <div class="detail-text">
+              <span>Dirección de Entrega</span>
+              <strong>{{ authService.currentUser()?.direccion || '-' }}</strong>
+            </div>
+          </div>
+
+          <button (click)="toggleEdit()" class="btn btn-outline w-100 edit-btn mt-3">
+            Editar Perfil ✏️
+          </button>
+        </div>
+
+        <!-- Edit mode form -->
+        <form *ngIf="isEditing()" [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-edit-form">
+          <div class="form-group">
+            <label for="nombre">Nombre Completo</label>
+            <input id="nombre" type="text" class="form-control" formControlName="nombre" />
+            <div *ngIf="profileForm.get('nombre')?.touched && profileForm.get('nombre')?.invalid" class="error-msg">
+              El nombre es obligatorio.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="telefono">Número Telefónico</label>
+            <input id="telefono" type="text" class="form-control" formControlName="telefono" />
+            <div *ngIf="profileForm.get('telefono')?.touched && profileForm.get('telefono')?.invalid" class="error-msg">
+              Ingresa un teléfono válido.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="direccion">Dirección de Entrega</label>
+            <input id="direccion" type="text" class="form-control" formControlName="direccion" />
+            <div *ngIf="profileForm.get('direccion')?.touched && profileForm.get('direccion')?.invalid" class="error-msg">
+              La dirección es obligatoria.
+            </div>
+          </div>
+
+          <div class="form-actions mt-3">
+            <button type="button" (click)="toggleEdit()" class="btn btn-secondary w-50">Cancelar</button>
+            <button type="submit" class="btn btn-primary w-50" [disabled]="isSaving()">
+              <span *ngIf="isSaving()" class="spinner"></span>
+              {{ isSaving() ? 'Guardando...' : 'Guardar' }}
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </section>
+
+    <!-- Orders History (Right) -->
+    <section class="orders-history-container">
+      <div class="history-card card">
+        <h3>Historial de Pedidos 📋</h3>
+        <p class="subtitle">Consulta el estado de tus compras anteriores.</p>
+        <hr />
+
+        <div *ngIf="userOrders().length === 0" class="empty-orders text-center">
+          <span class="history-emoji">🍰</span>
+          <h4>No tienes pedidos registrados</h4>
+          <p>Realiza tu primer pedido interactuando con el catálogo o chateando con Yani.</p>
+          <a routerLink="/" class="btn btn-primary btn-sm mt-2">Ir al Catálogo</a>
+        </div>
+
+        <div *ngIf="userOrders().length > 0" class="orders-list">
+          <div class="order-item-box" *ngFor="let order of userOrders()">
+            <div class="order-item-header">
+              <div class="order-id">
+                <strong>{{ order.id }}</strong>
+                <span>{{ order.fecha }}</span>
+              </div>
+              <span class="status-badge" [class]="order.estado.toLowerCase().replace(' ', '-')">
+                {{ order.estado }}
+              </span>
+            </div>
+            
+            <div class="order-item-body">
+              <ul>
+                <li *ngFor="let item of order.items">
+                  {{ item.cantidad }}x {{ item.nombre }} (S/ {{ item.precio }})
+                </li>
+              </ul>
+              <div class="order-total-price">
+                <span>Total:</span>
+                <strong>S/ {{ order.total }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</main>

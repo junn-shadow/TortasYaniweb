@@ -1,0 +1,91 @@
+<app-header></app-header>
+
+<main class="cart-layout animate-fade-in">
+  <h2>Tu Carrito de Compras</h2>
+
+  <div *ngIf="cartService.items().length === 0" class="empty-cart">
+    <span class="empty-emoji">🛒</span>
+    <h3>Tu carrito está vacío</h3>
+    <p>Aún no has agregado ninguna torta o postre. ¿Quieres ver nuestras especialidades?</p>
+    <a routerLink="/" class="btn btn-primary">🍰 Ver Catálogo</a>
+  </div>
+
+  <div *ngIf="cartService.items().length > 0" class="cart-grid">
+    <!-- Items list -->
+    <div class="cart-items-list">
+      <div class="cart-item card" *ngFor="let item of cartService.items(); let idx = index">
+        <img [src]="item.imagen" [alt]="item.nombre" class="item-img" />
+        
+        <div class="item-details">
+          <h3>{{ item.nombre }}</h3>
+          
+          <!-- Customizations Info -->
+          <div class="item-specs">
+            <span><strong>Tamaño:</strong> {{ item.tamanio === 'S' ? 'Chica' : item.tamanio === 'M' ? 'Mediana' : item.tamanio === 'L' ? 'Grande' : 'Familiar' }}</span>
+            <span *ngIf="item.pisos > 0"><strong>Pisos:</strong> {{ item.pisos }}</span>
+            <span><strong>Relleno:</strong> {{ item.sabor }}</span>
+            <span *ngIf="item.colorDecoracion && item.colorDecoracion !== 'Sin color'"><strong>Decoración:</strong> {{ item.colorDecoracion }}</span>
+            <span *ngIf="item.mensaje && item.mensaje !== 'Sin mensaje'" class="spec-msg">
+              <strong>Mensaje:</strong> "{{ item.mensaje }}"
+            </span>
+          </div>
+
+          <!-- Unit price -->
+          <span class="unit-price">S/ {{ item.precio }} c/u</span>
+        </div>
+
+        <!-- Quantity control -->
+        <div class="quantity-control">
+          <div class="counter-control">
+            <button (click)="onDecrease(idx)" class="counter-btn">-</button>
+            <span class="counter-value">{{ item.cantidad }}</span>
+            <button (click)="onIncrease(idx)" class="counter-btn">+</button>
+          </div>
+        </div>
+
+        <!-- Subtotal & remove -->
+        <div class="item-subtotal-remove">
+          <span class="subtotal">S/ {{ item.precio * item.cantidad }}</span>
+          <button (click)="onRemove(idx)" class="btn-remove" title="Eliminar del carrito">🗑️</button>
+        </div>
+      </div>
+
+      <button (click)="onClear()" class="btn btn-secondary btn-sm clear-btn">
+        🗑️ Vaciar Carrito
+      </button>
+    </div>
+
+    <!-- Cart summary panel -->
+    <div class="cart-summary-sidebar">
+      <div class="summary-card card">
+        <h3>Resumen de Compra</h3>
+        <hr />
+        
+        <div class="summary-row">
+          <span>Subtotal:</span>
+          <strong>S/ {{ cartService.totalPrice() }}</strong>
+        </div>
+        
+        <div class="summary-row">
+          <span>Delivery / Envío:</span>
+          <span>Se calcula al pagar</span>
+        </div>
+        
+        <hr />
+        
+        <div class="summary-row total-row">
+          <span>Total:</span>
+          <span class="total-price">S/ {{ cartService.totalPrice() }}</span>
+        </div>
+
+        <a routerLink="/checkout" class="btn btn-primary w-100 checkout-btn">
+          Proceder al Pago 💳
+        </a>
+        
+        <a routerLink="/" class="btn btn-outline w-100 back-btn">
+          🍰 Seguir Comprando
+        </a>
+      </div>
+    </div>
+  </div>
+</main>

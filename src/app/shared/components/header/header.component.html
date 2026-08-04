@@ -1,0 +1,51 @@
+<header class="main-header">
+  <div class="header-container">
+    <!-- Logo -->
+    <a routerLink="/" class="logo">
+      <span class="logo-icon">🎂</span>
+      <span class="logo-text">Tortas Yani</span>
+    </a>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">🍰 Catálogo</a>
+      <a routerLink="/chat" routerLinkActive="active">🤖 Yani AI (Asistente)</a>
+      <a *ngIf="authService.isAdmin()" routerLink="/admin/dashboard" routerLinkActive="active" class="admin-badge-link">⚙️ Panel Admin</a>
+    </nav>
+
+    <!-- Right Side Actions (Cart & User) -->
+    <div class="actions">
+      <!-- Cart Icon with Badge -->
+      <a routerLink="/cart" class="cart-btn" title="Ver Carrito">
+        <span class="cart-icon">🛒</span>
+        <span *ngIf="cartService.totalItems() > 0" class="cart-badge animate-scale">
+          {{ cartService.totalItems() }}
+        </span>
+      </a>
+
+      <!-- User Profile Dropdown -->
+      <div class="user-menu" *ngIf="authService.currentUser() as user">
+        <div class="user-info">
+          <img 
+            [src]="user.fotoPerfil || 'https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234876/torta_de_vainilla_vgcfkf.png'" 
+            alt="Foto perfil" 
+            class="user-avatar"
+          />
+          <span class="user-name">{{ user.nombre.split(' ')[0] }}</span>
+        </div>
+        
+        <div class="dropdown-menu">
+          <div class="dropdown-header">
+            <strong>{{ user.nombre }}</strong>
+            <span>{{ user.email }}</span>
+          </div>
+          <hr />
+          <a routerLink="/profile" class="dropdown-item">👤 Mi Perfil</a>
+          <button (click)="onLogout()" class="dropdown-item logout-btn">
+            🚪 Cerrar Sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

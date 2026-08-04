@@ -1,0 +1,235 @@
+/* ==========================================
+   🎨 DESIGN SYSTEM: TORTAS YANI
+   ========================================== */
+
+// 1. CSS VARIABLES (Theme Tokens)
+:root {
+  --font-primary: 'Poppins', sans-serif;
+  --font-secondary: 'Inter', sans-serif;
+
+  // AppColors mapping
+  --bg-color: #FFFDF8;          // Crema Almendra / Ivory
+  --primary-color: #F07070;     // Coral / Salmon Pink
+  --primary-hover: #e05c5c;
+  --primary-light: #FFE4EC;     // Melocotón Claro / Blush Pink
+  --secondary-color: #EFF1F7;   // Light Slate Grey
+  --text-color: #5A4A42;        // Chocolate / Dark Brown
+  --text-light: #8E7A70;        // Soft Brown
+  --white: #FFFFFF;
+  --grey: #9E9E9E;
+  --grey-light: #E0E0E0;
+
+  // Accents & Semantics
+  --accent-pink: #E88EA0;
+  --accent-dark-pink: #7A3A52;
+  --success: #4CAF50;
+  --success-light: #E8F5E9;
+  --warning: #FF9800;
+  --danger: #F44336;
+
+  // Shadows
+  --shadow-sm: 0 2px 4px rgba(90, 74, 66, 0.05);
+  --shadow-md: 0 8px 16px rgba(90, 74, 66, 0.08);
+  --shadow-lg: 0 16px 32px rgba(90, 74, 66, 0.12);
+  --shadow-hover: 0 20px 40px rgba(240, 112, 112, 0.15);
+
+  // Transitions
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Borders
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+}
+
+// 2. RESET & BASE GLOBAL STYLES
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  color: var(--text-color);
+  line-height: 1.25;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  
+  &:hover {
+    color: var(--primary-hover);
+  }
+}
+
+button, input, select, textarea {
+  font-family: var(--font-primary);
+  outline: none;
+}
+
+// 3. SCROLLBAR CUSTOMIZATION
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-pink);
+  border-radius: var(--radius-full);
+  border: 2px solid var(--bg-color);
+
+  &:hover {
+    background: var(--primary-color);
+  }
+}
+
+// 4. COMMON CORE UI UTILITIES
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+// Premium Buttons
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+  box-shadow: var(--shadow-sm);
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--white);
+
+  &:hover {
+    background-color: var(--primary-hover);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+
+  &:hover {
+    background-color: var(--grey-light);
+    transform: translateY(-2px);
+  }
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+
+  &:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-hover);
+    transform: translateY(-2px);
+  }
+}
+
+// Cards
+.card {
+  background-color: var(--white);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(90, 74, 66, 0.05);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  transition: all var(--transition-normal);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+  }
+}
+
+// Form Controls
+.form-group {
+  margin-bottom: 1.25rem;
+
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--text-light);
+  }
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  border: 1.5px solid var(--secondary-color);
+  border-radius: var(--radius-md);
+  background-color: var(--white);
+  color: var(--text-color);
+  transition: all var(--transition-fast);
+
+  &::placeholder {
+    color: var(--grey);
+  }
+
+  &:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(240, 112, 112, 0.15);
+  }
+}
+
+// Fade in animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-normal) forwards;
+}

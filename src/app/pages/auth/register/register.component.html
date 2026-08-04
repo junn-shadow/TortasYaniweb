@@ -1,0 +1,132 @@
+<div class="register-container animate-fade-in">
+  <div class="register-card">
+    <div class="logo-area">
+      <span class="logo-emoji">🎂</span>
+      <h1 class="logo-text">Tortas Yani</h1>
+      <p class="logo-tagline">Las mejores tortas para tus momentos especiales</p>
+    </div>
+
+    <h2>Crear Cuenta</h2>
+    <p class="subtitle">Regístrate para realizar pedidos y gestionar tus compras de forma fácil.</p>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Full Name -->
+      <div class="form-group">
+        <label for="nombre">Nombre Completo</label>
+        <div class="input-wrapper">
+          <span class="input-icon">👤</span>
+          <input
+            id="nombre"
+            type="text"
+            class="form-control"
+            placeholder="Juan Pérez"
+            formControlName="nombre"
+            [class.is-invalid]="registerForm.get('nombre')?.touched && registerForm.get('nombre')?.invalid"
+          />
+        </div>
+        <div *ngIf="registerForm.get('nombre')?.touched && registerForm.get('nombre')?.invalid" class="error-msg">
+          <span *ngIf="registerForm.get('nombre')?.errors?.['required']">El nombre es obligatorio.</span>
+          <span *ngIf="registerForm.get('nombre')?.errors?.['minlength']">Debe tener al menos 3 caracteres.</span>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Correo Electrónico</label>
+        <div class="input-wrapper">
+          <span class="input-icon">✉️</span>
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            placeholder="juan@correo.com"
+            formControlName="email"
+            [class.is-invalid]="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
+          />
+        </div>
+        <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="error-msg">
+          <span *ngIf="registerForm.get('email')?.errors?.['required']">El correo es obligatorio.</span>
+          <span *ngIf="registerForm.get('email')?.errors?.['email']">Ingresa un correo válido.</span>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔒</span>
+          <input
+            id="password"
+            type="password"
+            class="form-control"
+            placeholder="••••••••"
+            formControlName="password"
+            [class.is-invalid]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
+          />
+        </div>
+        <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="error-msg">
+          <span *ngIf="registerForm.get('password')?.errors?.['required']">La contraseña es obligatoria.</span>
+          <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Debe tener al menos 6 caracteres.</span>
+        </div>
+      </div>
+
+      <!-- Phone -->
+      <div class="form-group">
+        <label for="telefono">Número de Teléfono</label>
+        <div class="input-wrapper">
+          <span class="input-icon">📞</span>
+          <input
+            id="telefono"
+            type="text"
+            class="form-control"
+            placeholder="987654321"
+            formControlName="telefono"
+            [class.is-invalid]="registerForm.get('telefono')?.touched && registerForm.get('telefono')?.invalid"
+          />
+        </div>
+        <div *ngIf="registerForm.get('telefono')?.touched && registerForm.get('telefono')?.invalid" class="error-msg">
+          <span *ngIf="registerForm.get('telefono')?.errors?.['required']">El teléfono es obligatorio.</span>
+          <span *ngIf="registerForm.get('telefono')?.errors?.['pattern']">Ingresa un número telefónico válido.</span>
+        </div>
+      </div>
+
+      <!-- Address -->
+      <div class="form-group">
+        <label for="direccion">Dirección de Entrega</label>
+        <div class="input-wrapper">
+          <span class="input-icon">📍</span>
+          <input
+            id="direccion"
+            type="text"
+            class="form-control"
+            placeholder="Av. Principal 123, Miraflores"
+            formControlName="direccion"
+            [class.is-invalid]="registerForm.get('direccion')?.touched && registerForm.get('direccion')?.invalid"
+          />
+        </div>
+        <div *ngIf="registerForm.get('direccion')?.touched && registerForm.get('direccion')?.invalid" class="error-msg">
+          <span *ngIf="registerForm.get('direccion')?.errors?.['required']">La dirección es obligatoria para los envíos.</span>
+          <span *ngIf="registerForm.get('direccion')?.errors?.['minlength']">La dirección debe ser más específica.</span>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn btn-primary w-100" [disabled]="isLoading">
+        <span *ngIf="isLoading" class="spinner"></span>
+        {{ isLoading ? 'Creando cuenta...' : 'Registrarme' }}
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      ¿Ya tienes cuenta? <a routerLink="/auth/login" class="link-action">Inicia sesión aquí</a>
+    </div>
+  </div>
+</div>

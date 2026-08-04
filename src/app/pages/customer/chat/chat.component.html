@@ -1,0 +1,100 @@
+<app-header></app-header>
+
+<div class="chat-page-layout">
+  <div class="chat-container">
+    
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <div class="bot-info">
+        <span class="bot-avatar">🤖</span>
+        <div class="bot-details">
+          <h3>Yani, Asistente Pastelera</h3>
+          <span class="bot-status"><span class="status-dot"></span> Activa ahora</span>
+        </div>
+      </div>
+      <button (click)="startNewConversation()" class="btn btn-secondary btn-sm reset-btn">
+        ✨ Limpiar chat
+      </button>
+    </div>
+
+    <!-- Chat Messages Window -->
+    <div class="chat-messages" #chatScrollContainer>
+      <div 
+        *ngFor="let msg of chatService.messages()" 
+        class="message-wrapper"
+        [class.user]="msg.role === 'user'"
+        [class.assistant]="msg.role === 'assistant'"
+      >
+        <div class="message-bubble animate-fade-in">
+          <!-- Render message content (filter out the magic command in display if present) -->
+          <p>{{ msg.content.replace('[ADD_CART:', '').split(']')[msg.content.includes('[ADD_CART:') ? 1 : 0] }}</p>
+        </div>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div class="message-wrapper assistant" *ngIf="isLoading">
+        <div class="message-bubble typing-bubble">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick suggestions (visible only when starting) -->
+    <div class="suggestions-bar" *ngIf="chatService.messages().length <= 1">
+      <button 
+        *ngFor="let sug of quickSuggestions" 
+        (click)="sendQuickSuggestion(sug)"
+        class="suggestion-btn"
+      >
+        {{ sug }}
+      </button>
+    </div>
+
+    <!-- Input Form -->
+    <form (ngSubmit)="onSubmit()" class="chat-input-form">
+      <input 
+        type="text" 
+        placeholder="Pregúntale a Yani sobre una torta o confírmale tu pedido..." 
+        [(ngModel)]="userInput" 
+        name="userInput"
+        class="form-control"
+        [disabled]="isSending"
+      />
+      <button type="submit" class="btn btn-primary send-btn" [disabled]="!userInput.trim() || isSending">
+        <span>✈️</span>
+      </button>
+    </form>
+
+  </div>
+
+  <!-- Sidebar Instructions -->
+  <aside class="chat-sidebar">
+    <div class="sidebar-card card">
+      <h3>¿Cómo ordenar con Yani? 🤖</h3>
+      <p>Nuestra asistente de inteligencia artificial puede tomar tu pedido de forma interactiva.</p>
+      <ul>
+        <li>💬 <strong>Conversa:</strong> Cuéntale qué torta deseas (zanahoria, chocolate, red velvet, etc.).</li>
+        <li>📏 <strong>Personaliza:</strong> Yani te preguntará por el tamaño, rellenos, pisos y mensaje.</li>
+        <li>🛒 <strong>Confirma:</strong> Cuando estés de acuerdo con el precio, dile "Sí, agrégalo" y Yani lo meterá a tu carrito automáticamente.</li>
+      </ul>
+      <div class="sidebar-help">
+        <span class="help-icon">💡</span>
+        <p>Una vez agregado, toca el <strong>carrito de compras</strong> en la esquina superior para rellenar tu dirección de envío.</p>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- Floating Success Notification -->
+<div class="floating-toast animate-scale" *ngIf="successNotification() as notif">
+  <div class="toast-content">
+    <span class="toast-emoji">🛒</span>
+    <div class="toast-text">
+      <strong>¡Torta agregada al carrito!</strong>
+      <p>{{ notif.mensaje }}</p>
+    </div>
+  </div>
+  <a routerLink="/cart" class="btn btn-primary btn-sm">Ver Carrito</a>
+</div>

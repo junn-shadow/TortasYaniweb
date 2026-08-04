@@ -1,0 +1,217 @@
+<app-header></app-header>
+
+<main class="checkout-layout animate-fade-in">
+  
+  <!-- SUCCESS PAGE AFTER PLACING ORDER -->
+  <div *ngIf="orderPlaced()" class="success-screen card text-center">
+    <span class="success-emoji">🎉</span>
+    <h2>¡Pedido Confirmado con Éxito!</h2>
+    <p class="order-id-label">Código de Seguimiento: <strong>{{ generatedOrderId() }}</strong></p>
+    <p class="success-desc">Hemos registrado tu pedido. Yani y nuestro equipo de pastelería comenzarán a hornear tu torta personalizada muy pronto.</p>
+    
+    <div class="ticket-summary">
+      <h4>Resumen del Pedido</h4>
+      <div class="ticket-row" *ngFor="let item of checkoutForm.value.items">
+        <!-- Item lines -->
+      </div>
+      <div class="ticket-row total">
+        <span>Total Pagado:</span>
+        <strong>S/ {{ grandTotal() }}</strong>
+      </div>
+    </div>
+
+    <a routerLink="/" class="btn btn-primary">Volver al Inicio</a>
+  </div>
+
+  <!-- CHECKOUT FORM AND SUMMARY SECTION -->
+  <div *ngIf="!orderPlaced()">
+    <h2>Finalizar tu Pedido</h2>
+    
+    <div class="checkout-grid">
+      <!-- Order Form -->
+      <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" class="checkout-form-card card">
+        <h3>Datos de Entrega</h3>
+        <hr />
+
+        <div class="form-row">
+          <!-- Client Name -->
+          <div class="form-group col">
+            <label for="clienteName">Nombre de Contacto</label>
+            <input 
+              id="clienteName" 
+              type="text" 
+              class="form-control" 
+              formControlName="clienteName"
+              [class.is-invalid]="checkoutForm.get('clienteName')?.touched && checkoutForm.get('clienteName')?.invalid"
+            />
+            <div *ngIf="checkoutForm.get('clienteName')?.touched && checkoutForm.get('clienteName')?.invalid" class="error-msg">
+              Nombre obligatorio (mín. 3 letras).
+            </div>
+          </div>
+
+          <!-- Phone -->
+          <div class="form-group col">
+            <label for="telefono">Teléfono</label>
+            <input 
+              id="telefono" 
+              type="text" 
+              class="form-control" 
+              formControlName="telefono"
+              [class.is-invalid]="checkoutForm.get('telefono')?.touched && checkoutForm.get('telefono')?.invalid"
+            />
+            <div *ngIf="checkoutForm.get('telefono')?.touched && checkoutForm.get('telefono')?.invalid" class="error-msg">
+              Ingresa un teléfono válido.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <!-- Delivery Method -->
+          <div class="form-group col">
+            <label for="tipoEntrega">Tipo de Entrega</label>
+            <select id="tipoEntrega" class="form-control" formControlName="tipoEntrega">
+              <option value="Delivery">Envío a Domicilio (+S/5)</option>
+              <option value="Recojo">Recoger en Local (Gratis)</option>
+            </select>
+          </div>
+
+          <!-- Date -->
+          <div class="form-group col">
+            <label for="fechaEntrega">Fecha de Entrega</label>
+            <input 
+              id="fechaEntrega" 
+              type="date" 
+              class="form-control" 
+              formControlName="fechaEntrega"
+              [min]="minDate"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <!-- Time -->
+          <div class="form-group col">
+            <label for="horaEntrega">Hora de Entrega</label>
+            <select id="horaEntrega" class="form-control" formControlName="horaEntrega">
+              <option value="09:00">09:00 AM</option>
+              <option value="11:00">11:00 AM</option>
+              <option value="14:00">02:00 PM</option>
+              <option value="16:00">04:00 PM</option>
+              <option value="18:00">06:00 PM</option>
+            </select>
+          </div>
+
+          <!-- Payment Method -->
+          <div class="form-group col">
+            <label for="metodoPago">Método de Pago</label>
+            <select id="metodoPago" class="form-control" formControlName="metodoPago">
+              <option value="Yape">Yape</option>
+              <option value="Plin">Plin</option>
+              <option value="Efectivo">Efectivo contra entrega</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Address (Conditional) -->
+        <div class="form-group" *ngIf="checkoutForm.get('tipoEntrega')?.value === 'Delivery'">
+          <label for="direccion">Dirección Completa de Envío</label>
+          <input 
+            id="direccion" 
+            type="text" 
+            class="form-control" 
+            placeholder="Av. Larco 456, Depto 301, Cusco" 
+            formControlName="direccion"
+            [class.is-invalid]="checkoutForm.get('direccion')?.touched && checkoutForm.get('direccion')?.invalid"
+          />
+          <div *ngIf="checkoutForm.get('direccion')?.touched && checkoutForm.get('direccion')?.invalid" class="error-msg">
+            Por favor ingresa una dirección de envío válida.
+          </div>
+
+          <!-- MAP CONTAINER -->
+          <div class="delivery-map-container mt-3">
+            <label class="map-label">Ubica tu hogar en el mapa de Cusco 🗺️</label>
+            <div id="map" class="checkout-map"></div>
+            <div class="map-distance-info">
+              <span>📏 Distancia desde tienda: <strong>{{ distanceInKm() }} km</strong></span>
+              <span>🛵 Delivery Cotizado: <strong class="fee-badge">S/ {{ deliveryCost() }}</strong></span>
+            </div>
+            <p class="map-helper">Fijamos nuestra tienda ficticia en <strong>Plaza Túpac Amaru</strong>. Arrastra el marcador o haz clic en el mapa para ubicarte. Se cobra S/10 como base y se incrementa según la distancia (Máx: S/20).</p>
+          </div>
+        </div>
+
+        <hr />
+        
+        <button type="submit" class="btn btn-primary w-100" [disabled]="cartService.items().length === 0">
+          Confirmar y Pagar S/ {{ grandTotal() }}
+        </button>
+      </form>
+
+      <!-- Cart Itemized Summary Sidebar -->
+      <div class="checkout-summary-sidebar">
+        <div class="summary-card card">
+          <h3>Resumen del Carrito</h3>
+          <hr />
+          
+          <div class="checkout-items-list">
+            <div class="summary-item" *ngFor="let item of cartService.items()">
+              <div class="item-info">
+                <strong>{{ item.nombre }}</strong>
+                <span>{{ item.tamanio }} · Qty: {{ item.cantidad }}</span>
+              </div>
+              <span class="item-subtotal">S/ {{ item.precio * item.cantidad }}</span>
+            </div>
+          </div>
+
+          <hr />
+
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span>S/ {{ cartService.totalPrice() }}</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Envío ({{ checkoutForm.get('tipoEntrega')?.value }}):</span>
+            <span>S/ {{ shippingCost() }}</span>
+          </div>
+
+          <hr />
+
+          <div class="summary-row total-row">
+            <span>Total Final:</span>
+            <span class="total-price">S/ {{ grandTotal() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- YAPE / PLIN QR OVERLAY POPUP -->
+<div class="qr-overlay" *ngIf="showPaymentQR()" (click)="cancelQR()">
+  <div class="qr-card card text-center animate-fade-in" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="cancelQR()">✖️</button>
+    
+    <h3>Pago Seguro con {{ checkoutForm.get('metodoPago')?.value }}</h3>
+    <p>Escanea el código QR desde tu celular para realizar el pago de <strong>S/ {{ grandTotal() }}</strong>.</p>
+    
+    <div class="qr-code-placeholder">
+      <!-- QR Image matching the Flutter app look -->
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TortasYaniPayment" alt="QR Code Pago" class="qr-img" />
+      <span class="qr-brand-logo">{{ checkoutForm.get('metodoPago')?.value }}</span>
+    </div>
+
+    <p class="recipient">Titular: <strong>Tortas Yani S.A.C</strong></p>
+    
+    <div class="alert alert-success mt-3">
+      Una vez realizado el envío, presiona el botón de abajo para procesar tu orden.
+    </div>
+
+    <div class="actions">
+      <button (click)="cancelQR()" class="btn btn-secondary">Cancelar</button>
+      <button (click)="placeOrder()" class="btn btn-primary" [disabled]="isSubmitting">
+        <span *ngIf="isSubmitting" class="spinner"></span>
+        {{ isSubmitting ? 'Verificando...' : 'Ya realicé mi pago' }}
+      </button>
+    </div>
+  </div>
+</div>

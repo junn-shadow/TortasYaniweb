@@ -1,0 +1,189 @@
+<div class="admin-layout animate-fade-in">
+  
+  <!-- ADMIN SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-emoji">🍰</span>
+      <div class="logo-details">
+        <h2>Tortas Yani</h2>
+        <span>Panel Administrativo</span>
+      </div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/dashboard" class="nav-item">📊 Inicio / Métricas</a>
+      <a routerLink="/admin/products" class="nav-item active">🎂 Gestión de Tortas</a>
+      <a routerLink="/admin/orders" class="nav-item">📋 Gestión de Pedidos</a>
+      <a routerLink="/admin/users" class="nav-item">👥 Gestión de Usuarios</a>
+      <hr />
+      <a routerLink="/" class="nav-item">🌐 Ver Web Cliente</a>
+      <button (click)="onLogout()" class="nav-item logout-btn">🚪 Cerrar Sesión</button>
+    </nav>
+  </aside>
+
+  <!-- MAIN ADMIN CONTENT -->
+  <main class="admin-content-area">
+    <header class="admin-topbar section-title-action">
+      <div>
+        <h1>Gestión de Tortas 🍰</h1>
+        <p>Añade, edita o elimina tortas y postres del catálogo de la tienda.</p>
+      </div>
+      <button (click)="openAddModal()" class="btn btn-primary">
+        Añadir Producto ➕
+      </button>
+    </header>
+
+    <!-- Products List Table -->
+    <div class="table-card card">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Imagen</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Precio Base</th>
+            <th>Stock</th>
+            <th>Etiqueta</th>
+            <th class="text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let prod of productsService.products()">
+            <td>
+              <img [src]="prod.imagen" [alt]="prod.nombre" class="table-thumb" />
+            </td>
+            <td><strong>{{ prod.nombre }}</strong></td>
+            <td>{{ prod.categoria }}</td>
+            <td class="price">S/ {{ prod.precio }}</td>
+            <td>{{ prod.stock }} uds</td>
+            <td>
+              <span *ngIf="prod.badge" class="badge-label">{{ prod.badge }}</span>
+              <span *ngIf="!prod.badge" class="text-muted">-</span>
+            </td>
+            <td class="text-right actions-cell">
+              <button (click)="openEditModal(prod)" class="btn-action edit" title="Editar">✏️</button>
+              <button (click)="onDelete(prod.id)" class="btn-action delete" title="Eliminar">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<!-- ADD/EDIT PRODUCT OVERLAY MODAL -->
+<div class="modal-overlay" *ngIf="showFormModal()" (click)="closeModal()">
+  <div class="modal-card animate-fade-in" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="closeModal()">✖️</button>
+    
+    <h3>{{ isEditing() ? 'Editar Producto' : 'Añadir Nuevo Producto' }}</h3>
+    <hr />
+
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+      <div class="form-grid">
+        <!-- Text fields column -->
+        <div class="form-inputs">
+          <div class="form-group">
+            <label for="nombre">Nombre de la Torta/Postre</label>
+            <input id="nombre" type="text" class="form-control" formControlName="nombre" />
+            <div *ngIf="productForm.get('nombre')?.touched && productForm.get('nombre')?.invalid" class="error-msg">
+              El nombre es obligatorio (mín. 3 letras).
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col">
+              <label for="categoria">Categoría</label>
+              <select id="categoria" class="form-control" formControlName="categoria">
+                <option *ngFor="let cat of categoriesList" [value]="cat">{{ cat }}</option>
+              </select>
+            </div>
+
+            <div class="form-group col">
+              <label for="badge">Etiqueta (Badge)</label>
+              <input id="badge" type="text" class="form-control" placeholder="Ej: Popular, Nuevo" formControlName="badge" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col">
+              <label for="precio">Precio Base (S/)</label>
+              <input id="precio" type="number" class="form-control" formControlName="precio" />
+              <div *ngIf="productForm.get('precio')?.touched && productForm.get('precio')?.invalid" class="error-msg">
+                El precio debe ser mayor a 0.
+              </div>
+            </div>
+
+            <div class="form-group col">
+              <label for="stock">Stock Inicial (Uds)</label>
+              <input id="stock" type="number" class="form-control" formControlName="stock" />
+              <div *ngIf="productForm.get('stock')?.touched && productForm.get('stock')?.invalid" class="error-msg">
+                El stock no puede ser negativo.
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col">
+              <label for="ingredientesInput">Ingredientes (separados por coma)</label>
+              <input id="ingredientesInput" type="text" class="form-control" placeholder="Chocolate, Harina, Huevos" formControlName="ingredientesInput" />
+            </div>
+
+            <div class="form-group col">
+              <label for="tamaniosInput">Tamaños (separados por coma)</label>
+              <input id="tamaniosInput" type="text" class="form-control" placeholder="S, M, L" formControlName="tamaniosInput" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="descripcion">Descripción Comercial</label>
+            <textarea id="descripcion" rows="3" class="form-control" formControlName="descripcion"></textarea>
+            <div *ngIf="productForm.get('descripcion')?.touched && productForm.get('descripcion')?.invalid" class="error-msg">
+              Ingresa una breve descripción (mín. 5 letras).
+            </div>
+          </div>
+        </div>
+
+        <!-- Image Upload Column -->
+        <div class="form-upload-preview">
+          <label>Imagen del Producto (Aloja en Cloudinary)</label>
+          
+          <div class="image-box">
+            <img *ngIf="uploadedImageUrl()" [src]="uploadedImageUrl()" alt="Vista previa" class="preview-thumb" />
+            
+            <div *ngIf="!uploadedImageUrl() && !imageUploading()" class="upload-placeholder">
+              <span class="upload-icon">📷</span>
+              <span>No hay imagen cargada</span>
+            </div>
+
+            <div *ngIf="imageUploading()" class="upload-loader">
+              <span class="spinner"></span>
+              <span>Subiendo archivo a Cloudinary...</span>
+            </div>
+          </div>
+
+          <div class="file-input-wrapper">
+            <button type="button" class="btn btn-secondary w-100 btn-file-trigger">
+              📂 Seleccionar Imagen
+            </button>
+            <input type="file" accept="image/*" (change)="onFileSelected($event)" class="real-file-input" />
+          </div>
+          <input type="hidden" formControlName="imagen" />
+          <div *ngIf="productForm.get('imagen')?.touched && productForm.get('imagen')?.invalid" class="error-msg text-center mt-2">
+            La imagen es obligatoria. Sube un archivo.
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="actions">
+        <button type="button" (click)="closeModal()" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="imageUploading()">
+          {{ isEditing() ? 'Guardar Cambios' : 'Añadir Producto' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,149 @@
+<div class="admin-layout animate-fade-in">
+  
+  <!-- ADMIN SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-emoji">🍰</span>
+      <div class="logo-details">
+        <h2>Tortas Yani</h2>
+        <span>Panel Administrativo</span>
+      </div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/dashboard" class="nav-item">📊 Inicio / Métricas</a>
+      <a routerLink="/admin/products" class="nav-item">🎂 Gestión de Tortas</a>
+      <a routerLink="/admin/orders" class="nav-item active">📋 Gestión de Pedidos</a>
+      <a routerLink="/admin/users" class="nav-item">👥 Gestión de Usuarios</a>
+      <hr />
+      <a routerLink="/" class="nav-item">🌐 Ver Web Cliente</a>
+      <button (click)="onLogout()" class="nav-item logout-btn">🚪 Cerrar Sesión</button>
+    </nav>
+  </aside>
+
+  <!-- MAIN ADMIN CONTENT -->
+  <main class="admin-content-area">
+    <header class="admin-topbar">
+      <h1>Gestión de Pedidos 📋</h1>
+      <p>Supervisa el estado de producción y despacho de las órdenes del negocio.</p>
+    </header>
+
+    <!-- Orders Table -->
+    <div class="table-card card">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID Pedido</th>
+            <th>Cliente</th>
+            <th>Ubicación</th>
+            <th>Monto Total</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders()">
+            <td><strong>{{ order.id }}</strong></td>
+            <td>
+              <div class="client-cell">
+                <strong>{{ order.cliente }}</strong>
+                <span>{{ order.telefono }}</span>
+              </div>
+            </td>
+            <td>{{ order.direccion }}</td>
+            <td class="price">S/ {{ order.total }}</td>
+            <td>
+              <!-- Quick Select status dropdown directly in table -->
+              <select 
+                [ngModel]="order.estado" 
+                (ngModelChange)="updateStatus(order.id, $event)"
+                class="status-select"
+                [class]="order.estado.toLowerCase().replace(' ', '-')"
+              >
+                <option *ngFor="let opt of statusOptions" [value]="opt">{{ opt }}</option>
+              </select>
+            </td>
+            <td>
+              <button (click)="openDetails(order)" class="btn btn-outline btn-sm">
+                Detalles 👁️
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<!-- DETAILS MODAL OVERLAY -->
+<div class="modal-overlay" *ngIf="selectedOrder() as order" (click)="closeDetails()">
+  <div class="modal-card detail-modal animate-fade-in" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="closeDetails()">✖️</button>
+    
+    <h3>Detalles del Pedido: {{ order.id }}</h3>
+    <hr />
+
+    <div class="details-grid">
+      <!-- Client details info -->
+      <div class="details-client">
+        <h4>Información del Cliente</h4>
+        <p>👤 <strong>Nombre:</strong> {{ order.cliente }}</p>
+        <p>📞 <strong>Teléfono:</strong> {{ order.telefono }}</p>
+        <p>📍 <strong>Dirección de Entrega:</strong> {{ order.direccion }}</p>
+        <p>📅 <strong>Fecha Registrada:</strong> {{ order.fecha }}</p>
+      </div>
+
+      <!-- Order status manager -->
+      <div class="details-status">
+        <h4>Cambiar Estado del Pedido</h4>
+        <div class="form-group mt-2">
+          <select 
+            [ngModel]="order.estado" 
+            (ngModelChange)="updateStatus(order.id, $event)"
+            class="form-control status-form-control"
+            [class]="order.estado.toLowerCase().replace(' ', '-')"
+          >
+            <option *ngFor="let opt of statusOptions" [value]="opt">{{ opt }}</option>
+          </select>
+        </div>
+        <p class="status-tip">Actualizar este estado notificará al cliente y cambiará su prioridad en cocina.</p>
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Ordered items list -->
+    <div class="details-items">
+      <h4>Productos Solicitados</h4>
+      <table class="admin-table mt-2">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th class="text-right">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of order.items">
+            <td><strong>{{ item.nombre }}</strong></td>
+            <td>{{ item.cantidad }} uds</td>
+            <td>S/ {{ item.precio }}</td>
+            <td class="text-right price">S/ {{ item.precio * item.cantidad }}</td>
+          </tr>
+          <tr class="total-row-highlight">
+            <td colspan="3" class="text-right"><strong>Monto Total:</strong></td>
+            <td class="text-right price font-lg">S/ {{ order.total }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr />
+
+    <div class="actions">
+      <button (click)="closeDetails()" class="btn btn-secondary">Cerrar</button>
+    </div>
+  </div>
+</div>

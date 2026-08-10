@@ -36,22 +36,45 @@ export class SiteConfigService {
     this.loadConfig();
   }
 
+  private optimizeCloudinaryUrl(url: string): string {
+    if (!url) return '';
+    if (url.includes('cloudinary.com') && url.includes('/upload/')) {
+      if (!url.includes('f_auto') && !url.includes('q_auto')) {
+        return url.replace('/upload/', '/upload/f_auto,q_auto,w_1200/');
+      }
+    }
+    return url;
+  }
+
   private loadConfig(): void {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(this.storageKey);
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          this.config.set({ ...this.defaultConfig, ...parsed });
+          const merged = { ...this.defaultConfig, ...parsed };
+          merged.heroImageUrl = this.optimizeCloudinaryUrl(merged.heroImageUrl);
+          this.config.set(merged);
         } catch (e) {
-          this.config.set(this.defaultConfig);
+          const def = { ...this.defaultConfig };
+          def.heroImageUrl = this.optimizeCloudinaryUrl(def.heroImageUrl);
+          this.config.set(def);
         }
+      } else {
+        const def = { ...this.defaultConfig };
+        def.heroImageUrl = this.optimizeCloudinaryUrl(def.heroImageUrl);
+        this.config.set(def);
       }
+    } else {
+      const def = { ...this.defaultConfig };
+      def.heroImageUrl = this.optimizeCloudinaryUrl(def.heroImageUrl);
+      this.config.set(def);
     }
   }
 
   updateConfig(newConfig: Partial<SiteConfig>): void {
     const updated = { ...this.config(), ...newConfig };
+    updated.heroImageUrl = this.optimizeCloudinaryUrl(updated.heroImageUrl);
     this.config.set(updated);
     if (typeof window !== 'undefined') {
       localStorage.setItem(this.storageKey, JSON.stringify(updated));
@@ -59,7 +82,9 @@ export class SiteConfigService {
   }
 
   resetToDefaults(): void {
-    this.config.set(this.defaultConfig);
+    const def = { ...this.defaultConfig };
+    def.heroImageUrl = this.optimizeCloudinaryUrl(def.heroImageUrl);
+    this.config.set(def);
     if (typeof window !== 'undefined') {
       localStorage.removeItem(this.storageKey);
     }

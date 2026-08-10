@@ -162,6 +162,17 @@ export class ProductsService {
     this.loadProducts();
   }
 
+  public optimizeCloudinaryUrl(url: string): string {
+    if (!url) return '';
+    // If it's a Cloudinary image, inject auto-format, auto-quality, and max width of 600px
+    if (url.includes('cloudinary.com') && url.includes('/upload/')) {
+      if (!url.includes('f_auto') && !url.includes('q_auto')) {
+        return url.replace('/upload/', '/upload/f_auto,q_auto,w_600/');
+      }
+    }
+    return url;
+  }
+
   loadProducts(): void {
     this.isLoading.set(true);
     this.http.get<any[]>(this.baseUrl).pipe(
@@ -170,7 +181,7 @@ export class ProductsService {
         nombre: item.nombre || '',
         precio: parseFloat(item.precio) || 0,
         stock: item.stock || 0,
-        imagen: item.imagen || '',
+        imagen: this.optimizeCloudinaryUrl(item.imagen || ''),
         categoria: item.categoria || '',
         descripcion: item.descripcion || '',
         badge: item.badge || '',
@@ -181,7 +192,11 @@ export class ProductsService {
       }))),
       catchError(err => {
         console.warn('=== API FALLBACK: USANDO CATÁLOGO ESTÁTICO ===');
-        return of(this.mockCatalog);
+        const optimizedMock = this.mockCatalog.map(m => ({
+          ...m,
+          imagen: this.optimizeCloudinaryUrl(m.imagen)
+        }));
+        return of(optimizedMock);
       })
     ).subscribe(list => {
       this.products.set(list);
@@ -211,7 +226,7 @@ export class ProductsService {
           nombre: item.nombre || '',
           precio: parseFloat(item.precio) || 0,
           stock: item.stock || 0,
-          imagen: item.imagen || '',
+          imagen: this.optimizeCloudinaryUrl(item.imagen || ''),
           categoria: item.categoria || '',
           descripcion: item.descripcion || '',
           badge: item.badge || '',
@@ -239,7 +254,7 @@ export class ProductsService {
           nombre: item.nombre || '',
           precio: parseFloat(item.precio) || 0,
           stock: item.stock || 0,
-          imagen: item.imagen || '',
+          imagen: this.optimizeCloudinaryUrl(item.imagen || ''),
           categoria: item.categoria || '',
           descripcion: item.descripcion || '',
           badge: item.badge || '',

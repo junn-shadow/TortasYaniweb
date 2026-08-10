@@ -46,8 +46,16 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/admin/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
       {
+        path: 'site-cms',
+        loadComponent: () => import('./pages/admin/site-cms/site-cms.component').then(m => m.SiteCmsComponent)
+      },
+      {
         path: 'products',
         loadComponent: () => import('./pages/admin/products/products.component').then(m => m.ProductsComponent)
+      },
+      {
+        path: 'inventory',
+        loadComponent: () => import('./pages/admin/inventory/inventory.component').then(m => m.InventoryComponent)
       },
       {
         path: 'orders',
@@ -57,6 +65,7 @@ export const routes: Routes = [
         path: 'users',
         loadComponent: () => import('./pages/admin/users/users.component').then(m => m.UsersComponent)
       }
+
     ]
   },
   {

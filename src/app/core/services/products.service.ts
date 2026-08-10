@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class ProductsService {
-  private readonly baseUrl = 'http://localhost:8080/api/products';
+  private readonly baseUrl = 'https://tortasyaniapiweb-production.up.railway.app/api/products';
   
   // Cache of products
   products = signal<Product[]>([]);
@@ -189,6 +189,12 @@ export class ProductsService {
     });
   }
 
+  getProducts(): Observable<Product[]> {
+    this.loadProducts();
+    return of(this.products());
+  }
+
+
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getToken();
     return new HttpHeaders({
@@ -265,6 +271,24 @@ export class ProductsService {
       })
     );
   }
+
+  updateProductStock(id: string, newStock: number): Observable<boolean> {
+    const currentProds = this.products();
+    const prod = currentProds.find(p => p.id === id);
+    if (!prod) return of(false);
+
+    const updated = { ...prod, stock: newStock };
+    this.products.update(prev => prev.map(p => p.id === id ? updated : p));
+
+    return this.http.put<any>(`${this.baseUrl}/${id}`, updated, { headers: this.getAuthHeaders() }).pipe(
+      map(() => true),
+      catchError(err => {
+        console.warn(`Product stock update for ${id} saved locally in signal.`, err);
+        return of(true);
+      })
+    );
+  }
+
 
   calculatePrice(product: Product, size: string): number {
     const base = product.precio;

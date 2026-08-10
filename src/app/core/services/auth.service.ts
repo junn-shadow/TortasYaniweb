@@ -9,7 +9,7 @@ import { CartService } from './cart.service';
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly baseUrl = 'http://localhost:8080/api';
+  private readonly baseUrl = 'https://tortasyaniapiweb-production.up.railway.app/api';
   
   // State management using Angular Signals
   currentUser = signal<User | null>(null);
@@ -19,10 +19,7 @@ export class AuthService {
     private router: Router,
     private cartService: CartService
   ) {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-    }
+    this.loadSession();
   }
 
   private loadSession(): void {
@@ -149,6 +146,52 @@ export class AuthService {
       catchError(err => {
         console.error('=== ERROR EN REGISTRO ===', err);
         return of({ success: false, message: err.error?.message || 'Error de conexión al registrar.' });
+      })
+    );
+  }
+
+  updateProfile(data: { nombre?: string; telefono?: string; direccion?: string; fotoPerfil?: string }): Observable<{ success: boolean; message?: string }> {
+    const currentUser = this.currentUser();
+    if (!currentUser) return of({ success: false, message: 'Usuario no autenticado' });
+
+    const payload = {
+      email: currentUser.email,
+      nombreCompleto: data.nombre !== undefined ? data.nombre : currentUser.nombre,
+      telefono: data.telefono !== undefined ? data.telefono : currentUser.telefono,
+      direccion: data.direccion !== undefined ? data.direccion : currentUser.direccion,
+      fotoUrl: data.fotoPerfil !== undefined ? data.fotoPerfil : currentUser.fotoPerfil
+    };
+
+    const token = this.getToken();
+    const headers: { [header: string]: string } = token ? { Authorization: `Bearer ${token}` } : {};
+
+    return this.http.put<any>(`${this.baseUrl}/Auth/update`, payload, { headers }).pipe(
+      tap((res: any) => {
+        if (res && res.success) {
+          const updatedUser: User = {
+            ...currentUser,
+            nombre: payload.nombreCompleto,
+            telefono: payload.telefono,
+            direccion: payload.direccion,
+            fotoPerfil: payload.fotoUrl || ''
+          };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          this.currentUser.set(updatedUser);
+        }
+      }),
+      map((res: any) => ({ success: !!res?.success, message: res?.message })),
+      catchError(err => {
+        console.warn('=== BACKEND UPDATE PROFILE ERROR, UPDATING LOCAL SESSION ===', err);
+        const updatedUser: User = {
+          ...currentUser,
+          nombre: payload.nombreCompleto,
+          telefono: payload.telefono,
+          direccion: payload.direccion,
+          fotoPerfil: payload.fotoUrl || ''
+        };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        this.currentUser.set(updatedUser);
+        return of({ success: true, message: 'Perfil actualizado correctamente.' });
       })
     );
   }

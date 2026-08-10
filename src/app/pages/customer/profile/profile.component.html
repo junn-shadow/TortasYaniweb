@@ -9,20 +9,20 @@
         <div class="avatar-area">
           <div class="avatar-wrapper">
             <img 
-              [src]="authService.currentUser()?.fotoPerfil || 'https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234876/torta_de_vainilla_vgcfkf.png'" 
+              [src]="getAvatarUrl()" 
               alt="Foto Perfil" 
               class="profile-avatar"
             />
             <div class="avatar-upload-overlay" *ngIf="!avatarUploading()">
-              <span class="overlay-icon">📷</span>
-              <input type="file" accept="image/*" (change)="onAvatarSelected($event)" class="file-input" />
+              <input type="file" accept="image/*" (change)="onAvatarSelected($event)" class="file-input" title="Subir foto desde archivo" />
             </div>
             <div class="avatar-loader-overlay" *ngIf="avatarUploading()">
               <span class="spinner"></span>
             </div>
           </div>
-          <h3>{{ authService.currentUser()?.nombre }}</h3>
-          <span class="role-tag">{{ authService.currentUser()?.rol === 'admin' ? '👑 Administrador' : '🧁 Cliente' }}</span>
+
+          <h3 class="mt-3">{{ authService.currentUser()?.nombre }}</h3>
+          <span class="role-tag">{{ authService.currentUser()?.rol === 'admin' ? 'Administrador' : 'Cliente' }}</span>
         </div>
 
         <hr />
@@ -34,7 +34,6 @@
           </div>
 
           <div class="detail-row">
-            <span class="detail-icon">✉️</span>
             <div class="detail-text">
               <span>Correo Electrónico</span>
               <strong>{{ authService.currentUser()?.email }}</strong>
@@ -42,7 +41,6 @@
           </div>
 
           <div class="detail-row">
-            <span class="detail-icon">📞</span>
             <div class="detail-text">
               <span>Teléfono</span>
               <strong>{{ authService.currentUser()?.telefono || '-' }}</strong>
@@ -50,7 +48,6 @@
           </div>
 
           <div class="detail-row">
-            <span class="detail-icon">📍</span>
             <div class="detail-text">
               <span>Dirección de Entrega</span>
               <strong>{{ authService.currentUser()?.direccion || '-' }}</strong>
@@ -58,7 +55,7 @@
           </div>
 
           <button (click)="toggleEdit()" class="btn btn-outline w-100 edit-btn mt-3">
-            Editar Perfil ✏️
+            Editar Perfil
           </button>
         </div>
 
@@ -103,12 +100,11 @@
     <!-- Orders History (Right) -->
     <section class="orders-history-container">
       <div class="history-card card">
-        <h3>Historial de Pedidos 📋</h3>
+        <h3>Historial de Pedidos</h3>
         <p class="subtitle">Consulta el estado de tus compras anteriores.</p>
         <hr />
 
         <div *ngIf="userOrders().length === 0" class="empty-orders text-center">
-          <span class="history-emoji">🍰</span>
           <h4>No tienes pedidos registrados</h4>
           <p>Realiza tu primer pedido interactuando con el catálogo o chateando con Yani.</p>
           <a routerLink="/" class="btn btn-primary btn-sm mt-2">Ir al Catálogo</a>

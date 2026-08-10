@@ -101,10 +101,12 @@
   height: 42px;
   border-radius: var(--radius-full);
   background-color: var(--secondary-color);
+  color: var(--primary-color);
   transition: all var(--transition-fast);
 
-  .cart-icon {
-    font-size: 1.3rem;
+  .cart-svg {
+    stroke: var(--primary-color);
+    transition: stroke var(--transition-fast);
   }
 
   &:hover {
@@ -247,16 +249,53 @@
   animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-// Responsive design
+// Responsive design for mobile screens
 @media (max-width: 768px) {
+  .header-container {
+    padding: 0 0.75rem;
+  }
+
   .logo-text {
-    display: none;
+    font-size: 1.1rem;
+  }
+
+  .nav-links {
+    gap: 0.6rem;
+    a { 
+      font-size: 0.82rem; 
+      padding: 0.3rem 0;
+    }
+    .admin-badge-link {
+      padding: 0.2rem 0.5rem;
+      font-size: 0.78rem;
+    }
+  }
+
+  .actions {
+    gap: 0.6rem;
+  }
+
+  .cart-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .user-menu .user-info {
+    padding: 0.3rem 0.6rem;
+    .user-name {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 1rem;
   }
   .nav-links {
-    gap: 1rem;
-    a { font-size: 0.85rem; }
-  }
-  .user-name {
-    display: none;
+    gap: 0.4rem;
+    a {
+      font-size: 0.75rem;
+    }
   }
 }

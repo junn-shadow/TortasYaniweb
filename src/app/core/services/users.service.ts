@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class UsersService {
-  private readonly baseUrl = 'http://localhost:8080/api/users';
+  private readonly baseUrl = 'https://tortasyaniapiweb-production.up.railway.app/api/users';
   
   users = signal<User[]>([]);
   isLoading = signal<boolean>(false);
@@ -81,13 +81,35 @@ export class UsersService {
       password: userPayload.password || 'cliente123'
     };
 
+    const registerLocal = () => {
+      if (typeof window !== 'undefined' && userPayload.email) {
+        const registeredUsers = JSON.parse(localStorage.getItem('registered_users') || '[]');
+        const existingIdx = registeredUsers.findIndex((u: any) => u.email?.toLowerCase().trim() === userPayload.email?.toLowerCase().trim());
+        const userObj = {
+          email: userPayload.email,
+          password: userPayload.password || 'cliente123',
+          nombreCompleto: userPayload.nombre,
+          rol: userPayload.rol || 'client',
+          telefono: '999999999',
+          direccion: 'Tienda'
+        };
+        if (existingIdx >= 0) {
+          registeredUsers[existingIdx] = userObj;
+        } else {
+          registeredUsers.push(userObj);
+        }
+        localStorage.setItem('registered_users', JSON.stringify(registeredUsers));
+      }
+    };
+
     return this.http.post<any>(this.baseUrl, apiPayload, { headers: this.getHeaders() }).pipe(
       map(res => {
+        registerLocal();
         const newUser: User = {
           id: res.id.toString(),
           nombre: res.nombre,
           email: res.email,
-          rol: res.rol || 'client',
+          rol: res.rol || userPayload.rol || 'client',
           activo: res.activo ?? true
         };
         const updated = [...this.users(), newUser];
@@ -97,7 +119,7 @@ export class UsersService {
       }),
       catchError(err => {
         console.warn('=== ERROR CREATING USER IN API, SAVING LOCALLY ===', err);
-        // Fallback for offline usage
+        registerLocal();
         const newUser: User = {
           id: (this.users().length + 1).toString(),
           nombre: userPayload.nombre || '',
@@ -108,18 +130,6 @@ export class UsersService {
         const updated = [...this.users(), newUser];
         this.users.set(updated);
         localStorage.setItem('admin_users', JSON.stringify(updated));
-        
-        // Also save to database simulated file or local storage for fallback register log-in
-        const registeredUsers = JSON.parse(localStorage.getItem('registered_users') || '[]');
-        registeredUsers.push({
-          email: userPayload.email,
-          password: userPayload.password || 'cliente123',
-          nombreCompleto: userPayload.nombre,
-          telefono: '999999999',
-          direccion: 'Tienda'
-        });
-        localStorage.setItem('registered_users', JSON.stringify(registeredUsers));
-
         return of(newUser);
       })
     );

@@ -1,0 +1,532 @@
+<div class="admin-layout animate-fade-in">
+
+  <!-- ADMIN SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-emoji">🍰</span>
+      <div class="logo-details">
+        <h2>Tortas Yani</h2>
+        <span>Panel Administrativo</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/dashboard" class="nav-item">📊 Inicio / Métricas</a>
+      <a routerLink="/admin/products" class="nav-item">🎂 Gestión de Tortas</a>
+      <a routerLink="/admin/inventory" class="nav-item active">📦 Gestión de Inventario</a>
+      <a routerLink="/admin/orders" class="nav-item">📋 Gestión de Pedidos</a>
+      <a routerLink="/admin/users" class="nav-item">👥 Gestión de Usuarios</a>
+      <hr />
+      <a routerLink="/" class="nav-item">🌐 Ver Web Cliente</a>
+      <button (click)="onLogout()" class="nav-item logout-btn">🚪 Cerrar Sesión</button>
+    </nav>
+  </aside>
+
+  <!-- MAIN ADMIN CONTENT -->
+  <main class="admin-content-area">
+
+    <!-- Toast Notification Banner -->
+    <div *ngIf="toastMessage()" class="toast-banner animate-bounce-in">
+      <span>{{ toastMessage() }}</span>
+    </div>
+
+    <!-- Top Bar -->
+    <header class="admin-topbar">
+      <div class="header-greeting">
+        <h1>Gestión de Inventario 📦</h1>
+        <p>Control de insumos, materias primas, stock de productos y registro Kardex en tiempo real.</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-primary" (click)="openNewItemModal()">
+          ➕ Nuevo Insumo
+        </button>
+      </div>
+    </header>
+
+    <!-- Metrics Grid (KPI Cards) -->
+    <section class="metrics-grid" *ngIf="inventoryService.summary() as stats">
+      <div class="metric-card card gold-card">
+        <div class="metric-header">
+          <span class="metric-icon">💰</span>
+          <h3>Valor del Inventario</h3>
+        </div>
+        <span class="metric-value">S/ {{ stats.valorTotalInventario.toFixed(2) }}</span>
+        <span class="metric-trend success-text">Capital invertido en materias primas</span>
+      </div>
+
+      <div class="metric-card card pink-card">
+        <div class="metric-header">
+          <span class="metric-icon">📦</span>
+          <h3>Total Insumos</h3>
+        </div>
+        <span class="metric-value">{{ stats.totalItems }} Ítems</span>
+        <span class="metric-trend text-light">Registrados en catálogo</span>
+      </div>
+
+      <div class="metric-card card warning-card" [class.alert-border]="stats.itemsStockBajo > 0">
+        <div class="metric-header">
+          <span class="metric-icon">⚠️</span>
+          <h3>Stock Crítico</h3>
+        </div>
+        <span class="metric-value" [class.danger-text]="stats.itemsStockBajo > 0">
+          {{ stats.itemsStockBajo }} Insumos
+        </span>
+        <span class="metric-trend warning-text">Requieren reabastecimiento</span>
+      </div>
+
+      <div class="metric-card card pink-card">
+        <div class="metric-header">
+          <span class="metric-icon">📜</span>
+          <h3>Movimientos Hoy</h3>
+        </div>
+        <span class="metric-value">{{ stats.movimientosHoyCount }} Registros</span>
+        <span class="metric-trend text-light">Entradas, salidas y mermas</span>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <div class="inventory-tabs">
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab() === 'supplies'"
+        (click)="activeTab.set('supplies')">
+        🧪 Insumos y Materia Prima
+      </button>
+
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab() === 'products'"
+        (click)="activeTab.set('products')">
+        🎂 Stock de Productos Finales
+      </button>
+
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab() === 'kardex'"
+        (click)="activeTab.set('kardex')">
+        📜 Bitácora Kardex
+      </button>
+    </div>
+
+    <!-- TAB 1: INSUMOS Y MATERIA PRIMA -->
+    <div *ngIf="activeTab() === 'supplies'" class="tab-content card">
+      
+      <!-- Filter and Search Controls -->
+      <div class="table-controls">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            placeholder="Buscar por nombre, código o proveedor..." 
+            [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event)"
+            class="form-control"
+          />
+        </div>
+
+        <div class="filters-group">
+          <!-- Category Selector -->
+          <select 
+            [ngModel]="selectedCategory()" 
+            (ngModelChange)="selectedCategory.set($event)"
+            class="form-control select-control">
+            <option value="TODAS">Todas las Categorías</option>
+            <option value="Ingredientes">Ingredientes</option>
+            <option value="Empaques">Empaques</option>
+            <option value="Decoración">Decoración</option>
+            <option value="Utensilios">Utensilios</option>
+          </select>
+
+          <!-- Stock Status Pills -->
+          <div class="status-pills">
+            <button 
+              class="pill-btn" 
+              [class.active]="stockStatusFilter() === 'ALL'"
+              (click)="stockStatusFilter.set('ALL')">Todos</button>
+            <button 
+              class="pill-btn warning-pill" 
+              [class.active]="stockStatusFilter() === 'LOW'"
+              (click)="stockStatusFilter.set('LOW')">⚠️ Poco Stock</button>
+            <button 
+              class="pill-btn danger-pill" 
+              [class.active]="stockStatusFilter() === 'OUT'"
+              (click)="stockStatusFilter.set('OUT')">🔴 Agotados</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Supplies Table -->
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th class="col-code">CÓDIGO</th>
+              <th class="col-name">INSUMO</th>
+              <th class="col-cat">CATEGORÍA</th>
+              <th class="col-stock">STOCK</th>
+              <th class="col-min">MÍNIMO</th>
+              <th class="col-price">COSTO UNIT.</th>
+              <th class="col-total">VALOR TOTAL</th>
+              <th class="col-status">ESTADO</th>
+              <th class="col-actions">ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredSupplies()">
+              <td class="col-code"><code>{{ item.id }}</code></td>
+              <td class="col-name">
+                <div class="item-name-box">
+                  <strong>{{ item.nombre }}</strong>
+                  <span class="item-supplier" *ngIf="item.proveedor">Prov: {{ item.proveedor }}</span>
+                </div>
+              </td>
+              <td class="col-cat">
+                <span class="category-badge">{{ item.categoria }}</span>
+              </td>
+              <td class="col-stock">
+                <div class="stock-value-cell">
+                  <strong class="stock-num">{{ item.stockActual }}</strong>
+                  <span class="unit-text">{{ item.unidadMedida }}</span>
+                </div>
+              </td>
+              <td class="col-min">
+                <span class="min-stock-text">{{ item.stockMinimo }} {{ item.unidadMedida }}</span>
+              </td>
+              <td class="col-price">
+                <span class="price-text">S/ {{ item.costoUnitario.toFixed(2) }}</span>
+              </td>
+              <td class="col-total">
+                <strong class="total-price-text">S/ {{ (item.stockActual * item.costoUnitario).toFixed(2) }}</strong>
+              </td>
+              <td class="col-status">
+                <span class="badge" [class]="getStockStatusBadge(item).class">
+                  {{ getStockStatusBadge(item).label }}
+                </span>
+              </td>
+              <td class="col-actions">
+                <div class="actions-group">
+                  <button 
+                    class="btn-action btn-add-stock" 
+                    title="Añadir Stock (+)"
+                    (click)="openAdjustModal(item, 'ENTRADA')">
+                    ➕
+                  </button>
+                  <button 
+                    class="btn-action btn-sub-stock" 
+                    title="Consumir / Restar Stock (-)"
+                    (click)="openAdjustModal(item, 'SALIDA')">
+                    ➖
+                  </button>
+                  <button 
+                    class="btn-action btn-edit-item" 
+                    title="Editar Insumo"
+                    (click)="openEditItemModal(item)">
+                    ✏️
+                  </button>
+                  <button 
+                    class="btn-action btn-delete-item" 
+                    title="Eliminar Insumo"
+                    (click)="confirmDeleteItem(item)">
+                    🗑️
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+
+            <tr *ngIf="filteredSupplies().length === 0">
+              <td colspan="9" class="empty-state">
+                <p>🔍 No se encontraron insumos con los filtros seleccionados.</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: PRODUCTOS FINALES (TORTAS) -->
+    <div *ngIf="activeTab() === 'products'" class="tab-content card">
+      <div class="section-title-action">
+        <div>
+          <h3>Inventario de Productos Terminado (Catálogo Cliente)</h3>
+          <p class="subtext">Ajusta la disponibilidad y stock de tortas listas para venta directa.</p>
+        </div>
+      </div>
+
+      <div class="products-grid">
+        <div class="product-stock-card card" *ngFor="let product of productsService.products()">
+          <img [src]="product.imagen" [alt]="product.nombre" class="prod-img" />
+          <div class="prod-info">
+            <h4>{{ product.nombre }}</h4>
+            <span class="prod-cat">{{ product.categoria }}</span>
+            <div class="prod-meta">
+              <span class="prod-price">S/ {{ product.precio }}</span>
+              <span class="prod-stock-badge" [class.out]="product.stock === 0">
+                Stock: <strong>{{ product.stock }} un.</strong>
+              </span>
+            </div>
+          </div>
+          <button class="btn btn-outline btn-sm" (click)="openProductStockModal(product)">
+            ⚙️ Cambiar Stock
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: HISTORIAL KARDEX -->
+    <div *ngIf="activeTab() === 'kardex'" class="tab-content card">
+      <div class="section-title-action">
+        <h3>Historial Kardex de Movimientos</h3>
+        <p class="subtext">Auditoría detallada de compras, consumo de insumos y mermas.</p>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID Movimiento</th>
+              <th>Fecha y Hora</th>
+              <th>Insumo</th>
+              <th>Tipo</th>
+              <th>Cantidad</th>
+              <th>Motivo / Observación</th>
+              <th>Usuario</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let mov of inventoryService.movements()">
+              <td><code>{{ mov.id }}</code></td>
+              <td>{{ mov.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td><strong>{{ mov.itemName }}</strong></td>
+              <td>
+                <span 
+                  class="mov-badge" 
+                  [class.mov-in]="mov.tipo === 'ENTRADA'"
+                  [class.mov-out]="mov.tipo === 'SALIDA'"
+                  [class.mov-waste]="mov.tipo === 'MERMA'">
+                  {{ mov.tipo === 'ENTRADA' ? '📥 Entrada' : (mov.tipo === 'SALIDA' ? '📤 Salida' : '⚠️ Merma') }}
+                </span>
+              </td>
+              <td><strong>{{ mov.cantidad }} {{ mov.unidadMedida }}</strong></td>
+              <td>{{ mov.motivo }}</td>
+              <td><span class="user-tag">👤 {{ mov.usuario }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ================= MODAL 1: CREAR / EDITAR INSUMO ================= -->
+<div *ngIf="showItemModal()" class="modal-overlay animate-fade-in">
+  <div class="modal-card card">
+    <div class="modal-header">
+      <h2>{{ isEditing() ? '✏️ Editar Insumo' : '➕ Registrar Nuevo Insumo' }}</h2>
+      <button class="close-btn" (click)="closeItemModal()">✕</button>
+    </div>
+
+    <form (ngSubmit)="saveItem()" class="modal-body">
+      <div class="form-group">
+        <label>Nombre del Insumo / Materia Prima *</label>
+        <input 
+          type="text" 
+          [(ngModel)]="currentItem().nombre" 
+          name="nombre"
+          required
+          placeholder="Ej: Harina de Trigo, Crema de Leche, Cajas 25cm..." 
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Categoría</label>
+          <select [(ngModel)]="currentItem().categoria" name="categoria" class="form-control">
+            <option value="Ingredientes">Ingredientes</option>
+            <option value="Empaques">Empaques</option>
+            <option value="Decoración">Decoración</option>
+            <option value="Utensilios">Utensilios</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Unidad de Medida</label>
+          <select [(ngModel)]="currentItem().unidadMedida" name="unidadMedida" class="form-control">
+            <option value="kg">Kilogramos (kg)</option>
+            <option value="g">Gramos (g)</option>
+            <option value="litros">Litros (L)</option>
+            <option value="ml">Mililitros (ml)</option>
+            <option value="unidades">Unidades (un)</option>
+            <option value="cajas">Cajas</option>
+            <option value="paquetes">Paquetes</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Stock Actual Inicial</label>
+          <input 
+            type="number" 
+            [(ngModel)]="currentItem().stockActual" 
+            name="stockActual"
+            min="0"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Stock Mínimo (Alerta ⚠️)</label>
+          <input 
+            type="number" 
+            [(ngModel)]="currentItem().stockMinimo" 
+            name="stockMinimo"
+            min="0"
+            class="form-control"
+          />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Costo Unitario (S/)</label>
+          <input 
+            type="number" 
+            step="0.10"
+            [(ngModel)]="currentItem().costoUnitario" 
+            name="costoUnitario"
+            min="0"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Proveedor Sugerido</label>
+          <input 
+            type="text" 
+            [(ngModel)]="currentItem().proveedor" 
+            name="proveedor"
+            placeholder="Ej: Alicorp, Gloria, Cacao Sol..." 
+            class="form-control"
+          />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="closeItemModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">
+          💾 {{ isEditing() ? 'Guardar Cambios' : 'Registrar Insumo' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL 2: AJUSTE DE STOCK & KARDEX ================= -->
+<div *ngIf="showAdjustModal()" class="modal-overlay animate-fade-in">
+  <div class="modal-card card modal-sm">
+    <div class="modal-header">
+      <h2>⚙️ Registrar Movimiento de Stock</h2>
+      <button class="close-btn" (click)="closeAdjustModal()">✕</button>
+    </div>
+
+    <form (ngSubmit)="submitAdjustment()" class="modal-body">
+      <p class="adjust-target">Insumo: <strong>{{ adjustData().itemName }}</strong></p>
+
+      <div class="form-group">
+        <label>Tipo de Movimiento</label>
+        <div class="movement-type-selector">
+          <button 
+            type="button" 
+            class="type-btn type-in" 
+            [class.active]="adjustData().tipo === 'ENTRADA'"
+            (click)="adjustData().tipo = 'ENTRADA'">
+            📥 Entrada / Compra
+          </button>
+          <button 
+            type="button" 
+            class="type-btn type-out" 
+            [class.active]="adjustData().tipo === 'SALIDA'"
+            (click)="adjustData().tipo = 'SALIDA'">
+            📤 Salida / Consumo
+          </button>
+          <button 
+            type="button" 
+            class="type-btn type-waste" 
+            [class.active]="adjustData().tipo === 'MERMA'"
+            (click)="adjustData().tipo = 'MERMA'">
+            ⚠️ Merma / Dañado
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Cantidad *</label>
+        <input 
+          type="number" 
+          [(ngModel)]="adjustData().cantidad" 
+          name="cantidad"
+          min="1"
+          required
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Motivo / Observación *</label>
+        <input 
+          type="text" 
+          [(ngModel)]="adjustData().motivo" 
+          name="motivo"
+          required
+          placeholder="Ej: Reabastecimiento semanal, preparación de 15 tortas..." 
+          class="form-control"
+        />
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="closeAdjustModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Registrar en Kardex</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL 3: EDITAR STOCK DE PRODUCTO FINAL ================= -->
+<div *ngIf="showProductStockModal()" class="modal-overlay animate-fade-in">
+  <div class="modal-card card modal-sm">
+    <div class="modal-header">
+      <h2>🎂 Stock de Torta Final</h2>
+      <button class="close-btn" (click)="closeProductStockModal()">✕</button>
+    </div>
+
+    <div class="modal-body" *ngIf="selectedProduct() as prod">
+      <div class="prod-modal-info">
+        <img [src]="prod.imagen" [alt]="prod.nombre" class="prod-thumb" />
+        <div>
+          <h3>{{ prod.nombre }}</h3>
+          <p>Precio: S/ {{ prod.precio }}</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Stock Disponible en Vitrina / Producción</label>
+        <input 
+          type="number" 
+          [(ngModel)]="newProductStock" 
+          name="prodStock"
+          min="0"
+          class="form-control stock-input"
+        />
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="closeProductStockModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="saveProductStock()">Actualizar Stock</button>
+      </div>
+    </div>
+  </div>
+</div>

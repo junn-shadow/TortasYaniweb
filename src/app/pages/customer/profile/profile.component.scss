@@ -341,7 +341,16 @@
 
 // Responsive
 @media (max-width: 992px) {
+  .profile-layout {
+    padding: 1.25rem 0.75rem;
+  }
+
   .profile-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .profile-card {
+    padding: 1.5rem !important;
   }
 }

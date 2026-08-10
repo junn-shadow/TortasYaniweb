@@ -6,6 +6,7 @@ import { HeaderComponent } from '../../../shared/components/header/header.compon
 import { ProductsService } from '../../../core/services/products.service';
 import { CartService } from '../../../core/services/cart.service';
 import { Product } from '../../../core/models/models';
+import { SiteConfigService } from '../../../core/services/site-config.service';
 
 @Component({
   selector: 'app-home',
@@ -75,7 +76,8 @@ export class HomeComponent {
 
   constructor(
     public productsService: ProductsService,
-    private cartService: CartService
+    private cartService: CartService,
+    public siteConfigService: SiteConfigService
   ) {}
 
   selectCategory(category: string): void {

@@ -25,9 +25,9 @@ export class ChatComponent implements AfterViewChecked {
   private processedCartKeys = new Set<string>();
 
   quickSuggestions = [
-    '🎂 ¿Qué me recomiendas para un cumpleaños?',
-    '💍 Necesito una torta para una boda',
-    '🍫 ¿Cuál es la más vendida?'
+    '¿Qué me recomiendas para un cumpleaños?',
+    'Necesito una torta para una boda',
+    '¿Cuál es la más vendida?'
   ];
 
   // Success overlay banner when a cake gets auto-added by the chatbot
@@ -57,7 +57,7 @@ export class ChatComponent implements AfterViewChecked {
   startNewConversation(): void {
     this.chatService.resetChat();
     this.processedCartKeys.clear();
-    this.showFlashMessage('✨ Nueva conversación iniciada');
+    this.showFlashMessage('Nueva conversación iniciada');
   }
 
   onSubmit(): void {

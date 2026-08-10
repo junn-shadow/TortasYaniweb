@@ -4,7 +4,6 @@
   
   <!-- SUCCESS PAGE AFTER PLACING ORDER -->
   <div *ngIf="orderPlaced()" class="success-screen card text-center">
-    <span class="success-emoji">🎉</span>
     <h2>¡Pedido Confirmado con Éxito!</h2>
     <p class="order-id-label">Código de Seguimiento: <strong>{{ generatedOrderId() }}</strong></p>
     <p class="success-desc">Hemos registrado tu pedido. Yani y nuestro equipo de pastelería comenzarán a hornear tu torta personalizada muy pronto.</p>
@@ -91,13 +90,19 @@
         <div class="form-row">
           <!-- Time -->
           <div class="form-group col">
-            <label for="horaEntrega">Hora de Entrega</label>
+            <label for="horaEntrega">Hora de Entrega (Atención: 10:00 AM - 08:00 PM)</label>
             <select id="horaEntrega" class="form-control" formControlName="horaEntrega">
-              <option value="09:00">09:00 AM</option>
+              <option value="10:00">10:00 AM</option>
               <option value="11:00">11:00 AM</option>
+              <option value="12:00">12:00 PM (Mediodía)</option>
+              <option value="13:00">01:00 PM</option>
               <option value="14:00">02:00 PM</option>
+              <option value="15:00">03:00 PM</option>
               <option value="16:00">04:00 PM</option>
+              <option value="17:00">05:00 PM</option>
               <option value="18:00">06:00 PM</option>
+              <option value="19:00">07:00 PM</option>
+              <option value="20:00">08:00 PM</option>
             </select>
           </div>
 
@@ -129,11 +134,11 @@
 
           <!-- MAP CONTAINER -->
           <div class="delivery-map-container mt-3">
-            <label class="map-label">Ubica tu hogar en el mapa de Cusco 🗺️</label>
+            <label class="map-label">Ubica tu hogar en el mapa de Cusco</label>
             <div id="map" class="checkout-map"></div>
             <div class="map-distance-info">
-              <span>📏 Distancia desde tienda: <strong>{{ distanceInKm() }} km</strong></span>
-              <span>🛵 Delivery Cotizado: <strong class="fee-badge">S/ {{ deliveryCost() }}</strong></span>
+              <span>Distancia desde tienda: <strong>{{ distanceInKm() }} km</strong></span>
+              <span>Delivery Cotizado: <strong class="fee-badge">S/ {{ deliveryCost() }}</strong></span>
             </div>
             <p class="map-helper">Fijamos nuestra tienda ficticia en <strong>Plaza Túpac Amaru</strong>. Arrastra el marcador o haz clic en el mapa para ubicarte. Se cobra S/10 como base y se incrementa según la distancia (Máx: S/20).</p>
           </div>

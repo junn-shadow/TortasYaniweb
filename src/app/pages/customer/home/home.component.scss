@@ -521,22 +521,109 @@
 
 // Responsive
 @media (max-width: 768px) {
+  .home-layout {
+    padding: 1rem 0.75rem;
+  }
+
   .hero-section {
     grid-template-columns: 1fr;
     text-align: center;
-    padding: 2rem;
+    padding: 1.75rem 1.25rem;
+    margin-bottom: 2rem;
 
     .hero-content {
-      h1 { font-size: 2.2rem; }
-      .hero-buttons { justify-content: center; }
+      h1 { 
+        font-size: 1.8rem; 
+        margin-bottom: 0.75rem;
+      }
+      p {
+        font-size: 0.95rem;
+        margin-bottom: 1.25rem;
+      }
+      .hero-buttons { 
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.75rem;
+
+        .btn-lg {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          font-size: 0.95rem;
+        }
+      }
     }
+
+    .hero-image-container .hero-cake {
+      max-height: 220px;
+    }
+  }
+
+  .catalog-section .catalog-header {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 1.25rem;
+    gap: 1rem;
+
+    .search-bar {
+      max-width: 100%;
+    }
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .product-card {
+    .product-image-container {
+      height: 140px;
+    }
+    .product-details {
+      padding-top: 0.75rem;
+      h3 { font-size: 0.95rem; }
+      .desc { font-size: 0.78rem; margin-bottom: 0.75rem; }
+      .price-action {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+        .price { font-size: 1rem; }
+        .btn-sm { width: 100%; padding: 0.4rem; font-size: 0.8rem; }
+      }
+    }
+  }
+
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .modal-card {
+    padding: 1.25rem;
+    border-radius: var(--radius-md);
   }
 
   .modal-grid {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 
-  .modal-card {
-    padding: 1.5rem;
+  .purchase-panel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+
+    .quantity-add {
+      flex-direction: column;
+      align-items: stretch;
+      
+      .btn {
+        width: 100%;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .products-grid {
+    grid-template-columns: 1fr;
   }
 }

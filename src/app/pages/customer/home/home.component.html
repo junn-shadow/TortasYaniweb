@@ -4,27 +4,26 @@
   <!-- Hero Section -->
   <section class="hero-section animate-fade-in">
     <div class="hero-content">
-      <div class="hero-badge">✨ Lo mejor de la repostería artesanal</div>
-      <h1>Personaliza tu Torta Perfecta</h1>
-      <p>Diseña tu torta con los sabores, pisos y decoración que más te gusten, o habla con nuestra pastelera virtual <strong>Yani</strong> para que te recomiende la ideal.</p>
+      <div class="hero-badge">{{ siteConfigService.config().heroBadge }}</div>
+      <h1>{{ siteConfigService.config().heroTitle }}</h1>
+      <p>{{ siteConfigService.config().heroSubtitle }}</p>
       <div class="hero-buttons">
-        <a routerLink="/chat" class="btn btn-primary btn-lg">🤖 Chatea con Yani AI</a>
-        <a href="#catalogo" class="btn btn-outline btn-lg">🍰 Explorar Catálogo</a>
+        <a routerLink="/chat" class="btn btn-primary btn-lg">Chatea con Yani AI</a>
+        <a href="#catalogo" class="btn btn-outline btn-lg">Explorar Catálogo</a>
       </div>
     </div>
     <div class="hero-image-container">
-      <img src="https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234891/Torta_Matrimonial_qhxegx.png" alt="Torta Destacada" class="hero-cake" />
+      <img [src]="siteConfigService.config().heroImageUrl" alt="Torta Destacada" class="hero-cake" />
     </div>
   </section>
 
   <!-- Products Catalog & Filters -->
   <section id="catalogo" class="catalog-section">
     <div class="catalog-header">
-      <h2>Nuestras Especialidades</h2>
+      <h2>{{ siteConfigService.config().catalogTitle }}</h2>
       
       <!-- Search Input -->
       <div class="search-bar">
-        <span class="search-icon">🔍</span>
         <input 
           type="text" 
           placeholder="Buscar torta o postre..." 
@@ -48,11 +47,10 @@
 
     <!-- Products Grid -->
     <div *ngIf="productsService.isLoading()" class="loading-grid">
-      <div class="skeleton-card" *ngFor="let i of [1,2,3,4]"></div>
+      <div class="loading-card card skeleton" *ngFor="let i of [1,2,3,6]"></div>
     </div>
 
     <div *ngIf="!productsService.isLoading() && filteredProducts().length === 0" class="empty-state">
-      <span class="empty-emoji">🧁</span>
       <h3>No encontramos resultados</h3>
       <p>Prueba buscando otra torta o cambia el filtro de categoría.</p>
     </div>
@@ -66,13 +64,13 @@
         <div class="product-details">
           <div class="product-header">
             <h3>{{ prod.nombre }}</h3>
-            <span class="rating">⭐️ {{ prod.rating }}</span>
+            <span class="rating">Calificación: {{ prod.rating | number:'1.1-1' }}</span>
           </div>
           <p class="desc">{{ prod.descripcion }}</p>
           <div class="price-action">
             <span class="price">Desde S/ {{ prod.precio }}</span>
             <button (click)="openCustomizer(prod)" class="btn btn-primary btn-sm">
-              Personalizar 🎂
+              Personalizar
             </button>
           </div>
         </div>

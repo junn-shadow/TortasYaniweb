@@ -233,17 +233,30 @@
 
 // Responsive
 @media (max-width: 992px) {
+  .cart-layout {
+    padding: 1.5rem 0.75rem;
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+  }
+
   .cart-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .cart-item {
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
     gap: 1rem;
+    padding: 1rem !important;
 
     .item-img {
-      width: 80px;
-      height: 80px;
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
     }
 
     .item-subtotal-remove {

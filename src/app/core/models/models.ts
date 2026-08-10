@@ -63,3 +63,6 @@ export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
 }
+
+export * from './inventory.model';
+

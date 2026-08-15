@@ -20,6 +20,7 @@ export class AuthService {
     private cartService: CartService
   ) {
     this.loadSession();
+    this.initActivityTracker();
   }
 
   private loadSession(): void {
@@ -28,12 +29,62 @@ export class AuthService {
       const token = localStorage.getItem('token');
       if (userJson && token) {
         try {
+          const lastActive = localStorage.getItem('lastActiveTime');
+          if (lastActive) {
+            const lastActiveTime = parseInt(lastActive, 10);
+            const now = Date.now();
+            const diffMinutes = (now - lastActiveTime) / 1000 / 60;
+            if (diffMinutes >= 5) {
+              this.logout();
+              return;
+            }
+          }
           const user: User = JSON.parse(userJson);
           user.token = token;
           this.currentUser.set(user);
         } catch (e) {
           this.logout();
         }
+      }
+    }
+  }
+
+  private initActivityTracker(): void {
+    if (typeof window === 'undefined') return;
+
+    this.updateActivity();
+
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    events.forEach(event => {
+      window.addEventListener(event, () => this.updateActivity());
+    });
+
+    setInterval(() => this.checkSessionTimeout(), 10000);
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        this.checkSessionTimeout();
+      }
+    });
+  }
+
+  private updateActivity(): void {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('lastActiveTime', Date.now().toString());
+    }
+  }
+
+  private checkSessionTimeout(): void {
+    if (!this.currentUser()) return;
+
+    const lastActive = localStorage.getItem('lastActiveTime');
+    if (lastActive) {
+      const lastActiveTime = parseInt(lastActive, 10);
+      const now = Date.now();
+      const diffMinutes = (now - lastActiveTime) / 1000 / 60;
+      
+      if (diffMinutes >= 5) {
+        this.logout();
       }
     }
   }
@@ -66,6 +117,7 @@ export class AuthService {
           localStorage.setItem('user', JSON.stringify(user));
           localStorage.setItem('token', res.token);
           this.currentUser.set(user);
+          this.updateActivity();
         }
       }),
       map(res => ({ success: res.success, message: res.message })),
@@ -123,6 +175,7 @@ export class AuthService {
             if (typeof window !== 'undefined') {
               localStorage.setItem('user', JSON.stringify(user));
               localStorage.setItem('token', 'mock-jwt-token');
+              this.updateActivity();
             }
             this.currentUser.set(user);
             return of({ success: true, message: 'Login offline exitoso' });

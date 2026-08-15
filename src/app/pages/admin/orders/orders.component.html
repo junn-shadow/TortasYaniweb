@@ -66,9 +66,14 @@
               </select>
             </td>
             <td>
-              <button (click)="openDetails(order)" class="btn btn-outline btn-sm">
-                Detalles 👁️
-              </button>
+              <div class="action-buttons">
+                <button (click)="openDetails(order)" class="btn btn-outline btn-sm">
+                  Detalles 👁️
+                </button>
+                <button (click)="deleteOrder(order.id)" class="btn btn-danger btn-sm">
+                  Eliminar 🗑️
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>

@@ -170,6 +170,23 @@ button, input, select, textarea {
   }
 }
 
+.btn-danger {
+  background-color: var(--danger);
+  color: var(--white);
+
+  &:hover {
+    background-color: #d32f2f;
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+}
+
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+}
+
 // Cards
 .card {
   background-color: var(--white);

@@ -122,6 +122,19 @@ export class OrdersComponent {
     this.selectedOrder.set(null);
   }
 
+  deleteOrder(orderId: string): void {
+    if (confirm(`¿Estás seguro de que deseas eliminar permanentemente el pedido ${orderId}?`)) {
+      const updated = this.orders().filter(order => order.id !== orderId);
+      this.orders.set(updated);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('admin_orders', JSON.stringify(updated));
+      }
+      if (this.selectedOrder()?.id === orderId) {
+        this.selectedOrder.set(null);
+      }
+    }
+  }
+
   onLogout(): void {
     this.authService.logout();
   }

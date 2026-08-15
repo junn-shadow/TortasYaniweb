@@ -303,6 +303,12 @@
   }
 }
 
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 // Responsive
 @media (max-width: 768px) {
   .admin-layout {

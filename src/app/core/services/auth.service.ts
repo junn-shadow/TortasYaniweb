@@ -118,6 +118,9 @@ export class AuthService {
           localStorage.setItem('token', res.token);
           this.currentUser.set(user);
           this.updateActivity();
+        } else {
+          // Si el backend responde sin éxito, lanzamos error para intentar el login offline
+          throw new Error('Backend auth failed');
         }
       }),
       map(res => ({ success: res.success, message: res.message })),

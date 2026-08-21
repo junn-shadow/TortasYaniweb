@@ -1,118 +1,84 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { Order } from '../../../core/models/models';
+import { OrdersService } from '../../../core/services/orders.service';
+import { ExcelExportService } from '../../../core/services/excel-export.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { AdminSidebarComponent } from '../../../shared/components/admin-sidebar/admin-sidebar.component';
 
 @Component({
   selector: 'app-admin-orders',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink, AdminSidebarComponent],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.scss'
 })
 export class OrdersComponent {
-  
-  orders = signal<Order[]>([]);
 
-  // Selection for details view
+  // Search & Filters State
+  searchTerm = signal<string>('');
+  selectedStatus = signal<string>('TODOS');
+  startDate = signal<string>('');
+  endDate = signal<string>('');
+
+  // Selected Order for Details Modal
   selectedOrder = signal<Order | null>(null);
+  toastMessage = signal<string | null>(null);
 
-  // Status options matching Flutter app
-  statusOptions = ['Pendiente', 'En Horno', 'En Camino', 'Entregado'];
+  // Status options for Order workflow
+  statusOptions: Order['estado'][] = ['Pendiente', 'Pagado', 'En Preparación', 'Entregado', 'Cancelado'];
 
-  constructor(private authService: AuthService) {
-    this.loadOrders();
-  }
+  // Filtered Orders Computation
+  filteredOrders = computed(() => {
+    let list = this.ordersService.orders();
+    const search = this.searchTerm().toLowerCase().trim();
+    const status = this.selectedStatus();
+    const start = this.startDate();
+    const end = this.endDate();
 
-  loadOrders(): void {
-    if (typeof window !== 'undefined') {
-      const savedOrders = localStorage.getItem('admin_orders');
-      if (savedOrders) {
-        try {
-          this.orders.set(JSON.parse(savedOrders));
-        } catch (e) {
-          this.orders.set([]);
-        }
-      } else {
-        // Seed mock orders matching Flutter provider if completely empty
-        const mockOrders: Order[] = [
-          {
-            id: 'TK-1082',
-            fecha: 'Hoy, 14:32',
-            cliente: 'Carla Mendoza',
-            telefono: '987-654-321',
-            direccion: 'Av. Larco 456, Miraflores',
-            estado: 'Pendiente',
-            items: [
-              { nombre: 'Torta de Chocolate (M)', cantidad: 1, precio: 85.0 },
-              { nombre: 'Cheesecake de Maracuyá (S)', cantidad: 1, precio: 60.0 }
-            ],
-            total: 145.0
-          },
-          {
-            id: 'TK-1083',
-            fecha: 'Hoy, 13:10',
-            cliente: 'Roberto Gómez',
-            telefono: '942-881-209',
-            direccion: 'Calle Los Pinos 789, San Isidro',
-            estado: 'En Horno',
-            items: [
-              { nombre: 'Torta de Zanahoria (L)', cantidad: 1, precio: 87.75 }
-            ],
-            total: 87.75
-          },
-          {
-            id: 'TK-1084',
-            fecha: 'Hoy, 12:45',
-            cliente: 'Sofía Castro',
-            telefono: '915-234-567',
-            direccion: 'Jirón Huallaga 120, Centro de Lima',
-            estado: 'En Camino',
-            items: [
-              { nombre: 'Red Velvet (M)', cantidad: 1, precio: 90.0 },
-              { nombre: 'Pie de Limón (M)', cantidad: 1, precio: 55.0 }
-            ],
-            total: 145.0
-          },
-          {
-            id: 'TK-1085',
-            fecha: 'Ayer, 18:20',
-            cliente: 'Daniela Rivas',
-            telefono: '956-789-012',
-            direccion: 'Av. Primavera 1030, Surco',
-            estado: 'Entregado',
-            items: [
-              { nombre: 'Tres Leches (L)', cantidad: 2, precio: 94.5 }
-            ],
-            total: 189.0
-          }
-        ];
-
-        localStorage.setItem('admin_orders', JSON.stringify(mockOrders));
-        this.orders.set(mockOrders);
-      }
+    if (search) {
+      list = list.filter(o =>
+        o.id.toLowerCase().includes(search) ||
+        o.cliente.toLowerCase().includes(search) ||
+        (o.dniCliente && o.dniCliente.includes(search)) ||
+        o.direccion.toLowerCase().includes(search)
+      );
     }
-  }
 
-  updateStatus(orderId: string, newStatus: any): void {
-    const updated = this.orders().map(order => {
-      if (order.id === orderId) {
-        const o = { ...order, estado: newStatus as any };
-        if (this.selectedOrder()?.id === orderId) {
-          this.selectedOrder.set(o);
-        }
-        return o;
-      }
-      return order;
-    });
-
-    this.orders.set(updated);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('admin_orders', JSON.stringify(updated));
+    if (status !== 'TODOS') {
+      list = list.filter(o => o.estado === status);
     }
-  }
+
+    if (start) {
+      list = list.filter(o => o.fecha >= start);
+    }
+    if (end) {
+      list = list.filter(o => o.fecha <= end + ' 23:59');
+    }
+
+    return list;
+  });
+
+  // KPI Metrics Computed
+  totalSalesSum = computed(() => {
+    return this.filteredOrders().reduce((acc, o) => acc + o.total, 0);
+  });
+
+  totalCollectedSum = computed(() => {
+    return this.filteredOrders().reduce((acc, o) => acc + (o.montoAdelanto || o.total), 0);
+  });
+
+  totalPendingSum = computed(() => {
+    return this.filteredOrders().reduce((acc, o) => acc + (o.saldoPendiente || 0), 0);
+  });
+
+  constructor(
+    public ordersService: OrdersService,
+    private excelExportService: ExcelExportService,
+    public authService: AuthService
+  ) {}
 
   openDetails(order: Order): void {
     this.selectedOrder.set(order);
@@ -122,17 +88,38 @@ export class OrdersComponent {
     this.selectedOrder.set(null);
   }
 
-  deleteOrder(orderId: string): void {
-    if (confirm(`¿Estás seguro de que deseas eliminar permanentemente el pedido ${orderId}?`)) {
-      const updated = this.orders().filter(order => order.id !== orderId);
-      this.orders.set(updated);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('admin_orders', JSON.stringify(updated));
-      }
-      if (this.selectedOrder()?.id === orderId) {
-        this.selectedOrder.set(null);
-      }
+  updateStatus(orderId: string, newStatus: any): void {
+    this.ordersService.updateOrderStatus(orderId, newStatus);
+    if (this.selectedOrder()?.id === orderId) {
+      this.selectedOrder.set({ ...this.selectedOrder()!, estado: newStatus });
     }
+    this.showToast(`✅ Estado de orden ${orderId} actualizado a "${newStatus}"`);
+  }
+
+  exportExcelReport(): void {
+    const list = this.filteredOrders();
+    if (list.length === 0) {
+      this.showToast('⚠️ No hay órdenes en el filtro actual para exportar.');
+      return;
+    }
+    const total = this.totalSalesSum();
+    this.excelExportService.exportSalesReport(list, total, `Reporte_Ventas_Yane_${this.selectedStatus()}`);
+    this.showToast('📊 Reporte de Ventas Excel generado correctamente');
+  }
+
+  deleteOrder(orderId: string): void {
+    if (confirm(`¿Estás seguro de eliminar permanentemente la orden ${orderId}?`)) {
+      this.ordersService.deleteOrder(orderId);
+      if (this.selectedOrder()?.id === orderId) {
+        this.closeDetails();
+      }
+      this.showToast(`🗑️ Orden ${orderId} eliminada`);
+    }
+  }
+
+  showToast(msg: string): void {
+    this.toastMessage.set(msg);
+    setTimeout(() => this.toastMessage.set(null), 3500);
   }
 
   onLogout(): void {

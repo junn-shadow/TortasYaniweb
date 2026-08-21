@@ -7,10 +7,12 @@ import { ProductsService } from '../../../core/services/products.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { InventoryItem, InventoryCategory, UnitOfMeasure, MovementType, Product } from '../../../core/models/models';
 
+import { AdminSidebarComponent } from '../../../shared/components/admin-sidebar/admin-sidebar.component';
+
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, AdminSidebarComponent],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.scss'
 })

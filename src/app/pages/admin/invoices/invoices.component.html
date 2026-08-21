@@ -1,0 +1,141 @@
+<div class="admin-layout animate-fade-in">
+  
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <main class="admin-content-area">
+
+    <div *ngIf="toastMessage()" class="toast-banner animate-bounce-in">
+      <span>{{ toastMessage() }}</span>
+    </div>
+
+    <header class="admin-topbar">
+      <div class="header-title">
+        <h1>Comprobantes de Venta SUNAT 📄</h1>
+        <p>Gestión de Boletas de Venta, Facturas Electrónicas, Tickets y Notas de Crédito.</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-excel" (click)="exportExcel()">
+          📊 Exportar Excel Comprobantes
+        </button>
+      </div>
+    </header>
+
+    <!-- 3 KPI Cards -->
+    <section class="metrics-grid">
+      <div class="metric-card gold-card">
+        <div class="metric-header">
+          <span class="metric-icon">📄</span>
+          <h3>Total Emitidos</h3>
+        </div>
+        <span class="metric-value">{{ totalEmitted() }} Documentos</span>
+        <span class="metric-sub">Boletas, Facturas y Tickets</span>
+      </div>
+
+      <div class="metric-card pink-card">
+        <div class="metric-header">
+          <span class="metric-icon">💰</span>
+          <h3>Monto Facturado</h3>
+        </div>
+        <span class="metric-value">S/ {{ totalInvoiced().toFixed(2) }}</span>
+        <span class="metric-sub">Ventas declaradas SUNAT</span>
+      </div>
+
+      <div class="metric-card warning-card">
+        <div class="metric-header">
+          <span class="metric-icon">🚫</span>
+          <h3>Comprobantes Anulados</h3>
+        </div>
+        <span class="metric-value danger-text">{{ totalCanceled() }} Notas de Crédito</span>
+        <span class="metric-sub">Anulaciones y notas de crédito</span>
+      </div>
+    </section>
+
+    <!-- Controls -->
+    <div class="controls-card card">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          placeholder="Buscar N° Comprobante, Orden, RUC/DNI o Cliente..." 
+          [ngModel]="searchTerm()" 
+          (ngModelChange)="searchTerm.set($event)"
+          class="form-control"
+        />
+      </div>
+
+      <div class="filters-group">
+        <div class="date-filter">
+          <label>Desde:</label>
+          <input type="date" [ngModel]="startDate()" (ngModelChange)="startDate.set($event)" class="form-control date-input" />
+        </div>
+        <div class="date-filter">
+          <label>Hasta:</label>
+          <input type="date" [ngModel]="endDate()" (ngModelChange)="endDate.set($event)" class="form-control date-input" />
+        </div>
+
+        <select [ngModel]="selectedType()" (ngModelChange)="selectedType.set($event)" class="form-control select-control">
+          <option value="TODOS">Todos los Tipos</option>
+          <option value="Boleta">Boleta</option>
+          <option value="Factura">Factura</option>
+          <option value="Ticket">Ticket</option>
+          <option value="Nota de Crédito">Nota de Crédito</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Invoices Table -->
+    <div class="table-card card">
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>N° Comprobante</th>
+              <th>N° Orden</th>
+              <th>Cliente</th>
+              <th>DNI / RUC</th>
+              <th>Tipo</th>
+              <th>Fecha Emisión</th>
+              <th>Monto Total</th>
+              <th>Estado SUNAT</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let inv of filteredInvoices()">
+              <td><code class="doc-code">{{ inv.numeroComprobante }}</code></td>
+              <td><strong>{{ inv.orderId }}</strong></td>
+              <td><strong>{{ inv.cliente }}</strong></td>
+              <td><code>{{ inv.documentoCliente }}</code></td>
+              <td><span class="type-badge" [class]="inv.tipo.toLowerCase().replace(' ', '-')">{{ inv.tipo }}</span></td>
+              <td>{{ inv.fechaEmision }}</td>
+              <td class="price">S/ {{ inv.montoTotal.toFixed(2) }}</td>
+              <td>
+                <span class="badge-status" [class]="inv.estadoSunat.toLowerCase()">
+                  {{ inv.estadoSunat }}
+                </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button (click)="printTicket(inv)" class="btn btn-outline btn-sm" title="Imprimir Ticket / PDF">
+                    🖨️ Ticket
+                  </button>
+                  <button (click)="sendWhatsApp(inv)" class="btn btn-whatsapp btn-sm" title="Enviar por WhatsApp">
+                    💬 WhatsApp
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredInvoices().length === 0">
+              <td colspan="9" class="empty-state">
+                <p>🔍 No se encontraron comprobantes electrónicos.</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>

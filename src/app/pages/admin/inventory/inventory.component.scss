@@ -425,6 +425,16 @@
     align-items: baseline;
     gap: 0.35rem;
 
+    &.stock-critical-red {
+      .stock-num {
+        color: #d32f2f !important;
+        font-size: 1.15rem;
+      }
+      .unit-text {
+        color: #d32f2f !important;
+      }
+    }
+
     .stock-num {
       font-size: 1.05rem;
       font-weight: 800;
@@ -434,6 +444,15 @@
       font-size: 0.82rem;
       color: #7a6a70;
       font-weight: 600;
+    }
+    .low-alert-tag {
+      font-size: 0.72rem;
+      background: #ffebee;
+      color: #c62828;
+      padding: 0.15rem 0.4rem;
+      border-radius: 6px;
+      font-weight: 800;
+      margin-left: 0.3rem;
     }
   }
 

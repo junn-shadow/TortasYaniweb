@@ -1,0 +1,174 @@
+<div class="admin-layout animate-fade-in">
+  
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <main class="admin-content-area">
+
+    <div *ngIf="toastMessage()" class="toast-banner animate-bounce-in">
+      <span>{{ toastMessage() }}</span>
+    </div>
+
+    <header class="admin-topbar">
+      <div class="header-title">
+        <h1>Validar Pagos & Reportes 💰</h1>
+        <p>Verificación de vouchers (Yape/Plin), pagos de adelantos (50%) y saldos por cobrar.</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-excel" (click)="exportExcel()">
+          📊 Exportar Excel Pagos
+        </button>
+      </div>
+    </header>
+
+    <!-- 3 KPI Cards -->
+    <section class="metrics-grid">
+      <div class="metric-card gold-card">
+        <div class="metric-header">
+          <span class="metric-icon">💳</span>
+          <h3>Total Cobrado</h3>
+        </div>
+        <span class="metric-value">S/ {{ totalCollected().toFixed(2) }}</span>
+        <span class="metric-sub">Suma de adelantos + saldos aprobados</span>
+      </div>
+
+      <div class="metric-card warning-card">
+        <div class="metric-header">
+          <span class="metric-icon">⏳</span>
+          <h3>Pagos Por Validar</h3>
+        </div>
+        <span class="metric-value warning-text">{{ pendingValidationCount() }} Transacciones</span>
+        <span class="metric-sub">Vouchers en revisión</span>
+      </div>
+
+      <div class="metric-card danger-card">
+        <div class="metric-header">
+          <span class="metric-icon">📋</span>
+          <h3>Saldos Por Cobrar</h3>
+        </div>
+        <span class="metric-value danger-text">S/ {{ pendingReceivables().toFixed(2) }}</span>
+        <span class="metric-sub">De los adelantos del 50%</span>
+      </div>
+    </section>
+
+    <!-- Controls & Filters -->
+    <div class="controls-card card">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          placeholder="Buscar por ID Pago, ID Orden o Cliente..." 
+          [ngModel]="searchTerm()" 
+          (ngModelChange)="searchTerm.set($event)"
+          class="form-control"
+        />
+      </div>
+
+      <div class="filters-group">
+        <div class="date-filter">
+          <label>Desde:</label>
+          <input type="date" [ngModel]="startDate()" (ngModelChange)="startDate.set($event)" class="form-control date-input" />
+        </div>
+        <div class="date-filter">
+          <label>Hasta:</label>
+          <input type="date" [ngModel]="endDate()" (ngModelChange)="endDate.set($event)" class="form-control date-input" />
+        </div>
+
+        <select [ngModel]="selectedMethod()" (ngModelChange)="selectedMethod.set($event)" class="form-control select-control">
+          <option value="TODOS">Todos los Métodos</option>
+          <option value="Yape">Yape</option>
+          <option value="Plin">Plin</option>
+          <option value="Tarjeta">Tarjeta</option>
+          <option value="Efectivo">Efectivo</option>
+        </select>
+
+        <select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)" class="form-control select-control">
+          <option value="TODOS">Todos los Estados</option>
+          <option value="Aprobado">Aprobado</option>
+          <option value="En revisión">En revisión</option>
+          <option value="Rechazado">Rechazado</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Payments Table -->
+    <div class="table-card card">
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID Pago</th>
+              <th>ID Orden</th>
+              <th>Cliente</th>
+              <th>Método</th>
+              <th>Tipo Pago</th>
+              <th>Monto (S/)</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pay of filteredPayments()">
+              <td><code>{{ pay.id }}</code></td>
+              <td><strong class="order-link">{{ pay.orderId }}</strong></td>
+              <td><strong>{{ pay.cliente }}</strong></td>
+              <td>
+                <span class="method-badge" [class]="pay.metodo.toLowerCase()">
+                  {{ pay.metodo }}
+                </span>
+              </td>
+              <td><span class="type-tag">{{ pay.tipo }}</span></td>
+              <td class="price">S/ {{ pay.monto.toFixed(2) }}</td>
+              <td>
+                <span class="badge-status" [class]="pay.estado.toLowerCase().replace(' ', '-').replace('ó', 'o')">
+                  {{ pay.estado }}
+                </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button *ngIf="pay.voucherUrl" (click)="openVoucherModal(pay)" class="btn btn-outline btn-sm">
+                    🖼️ Ver Voucher
+                  </button>
+                  <button *ngIf="pay.estado === 'En revisión'" (click)="approve(pay.id)" class="btn btn-success btn-sm">
+                    ✓ Aprobar
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredPayments().length === 0">
+              <td colspan="8" class="empty-state">
+                <p>🔍 No se encontraron transacciones registradas.</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- VOUCHER PREVIEW MODAL -->
+<div class="modal-overlay" *ngIf="selectedPayment() as pay" (click)="closeVoucherModal()">
+  <div class="modal-card modal-sm animate-fade-in" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>🖼️ Voucher de Pago: {{ pay.id }}</h2>
+      <button class="close-btn" (click)="closeVoucherModal()">✕</button>
+    </div>
+
+    <div class="voucher-preview-body text-center">
+      <p>Cliente: <strong>{{ pay.cliente }}</strong> (Orden {{ pay.orderId }})</p>
+      <p>Monto: <strong class="price-lg">S/ {{ pay.monto.toFixed(2) }}</strong> ({{ pay.metodo }})</p>
+
+      <div class="voucher-img-wrapper mt-2">
+        <img [src]="pay.voucherUrl" alt="Voucher de Pago" class="voucher-img" />
+      </div>
+    </div>
+
+    <div class="modal-footer mt-3">
+      <button (click)="reject(pay.id)" class="btn btn-danger">Rechazar</button>
+      <button (click)="approve(pay.id)" class="btn btn-success">✓ Aprobar Pago</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,157 @@
+<div class="admin-layout animate-fade-in">
+  
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <main class="admin-content-area">
+
+    <div *ngIf="toastMessage()" class="toast-banner animate-bounce-in">
+      <span>{{ toastMessage() }}</span>
+    </div>
+
+    <header class="admin-topbar">
+      <div class="header-title">
+        <h1>Proveedores / Compras de Insumos 🏭</h1>
+        <p>Control contable de gastos en materias primas, facturas a crédito y egresos.</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-excel" (click)="exportExcel()">
+          📊 Exportar a Excel
+        </button>
+      </div>
+    </header>
+
+    <!-- 3 KPI Cards -->
+    <section class="metrics-grid">
+      <div class="metric-card pink-card">
+        <div class="metric-header">
+          <span class="metric-icon">🛒</span>
+          <h3>Total Comprado</h3>
+        </div>
+        <span class="metric-value">S/ {{ totalPurchased().toFixed(2) }}</span>
+        <span class="metric-sub">Egresos brutos acumulados</span>
+      </div>
+
+      <div class="metric-card gold-card">
+        <div class="metric-header">
+          <span class="metric-icon">✓</span>
+          <h3>Total Pagado</h3>
+        </div>
+        <span class="metric-value">S/ {{ totalPaid().toFixed(2) }}</span>
+        <span class="metric-sub">Pagos cancelados a proveedores</span>
+      </div>
+
+      <div class="metric-card warning-card">
+        <div class="metric-header">
+          <span class="metric-icon">⚠️</span>
+          <h3>Cuentas Por Pagar</h3>
+        </div>
+        <span class="metric-value danger-text">S/ {{ accountsPayable().toFixed(2) }}</span>
+        <span class="metric-sub">Deudas pendientes con proveedores</span>
+      </div>
+    </section>
+
+    <!-- Controls -->
+    <div class="controls-card card">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          placeholder="Buscar por ID Compra, Proveedor o Insumo..." 
+          [ngModel]="searchTerm()" 
+          (ngModelChange)="searchTerm.set($event)"
+          class="form-control"
+        />
+      </div>
+
+      <div class="filters-group">
+        <select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)" class="form-control select-control">
+          <option value="TODOS">Todos los Estados</option>
+          <option value="Pagado">Pagado</option>
+          <option value="Pendiente">Pendiente (Deuda)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Purchases Table -->
+    <div class="table-card card">
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID Compra</th>
+              <th>Proveedor</th>
+              <th>Fecha</th>
+              <th>Resumen Insumos</th>
+              <th>Monto Total</th>
+              <th>Monto Pagado</th>
+              <th>Saldo Pendiente</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredPurchases()">
+              <td><code>{{ item.id }}</code></td>
+              <td><strong>{{ item.proveedor }}</strong></td>
+              <td>{{ item.fecha }}</td>
+              <td class="insumos-cell">{{ item.insumosSummary }}</td>
+              <td class="price">S/ {{ item.montoTotal.toFixed(2) }}</td>
+              <td class="paid-text">S/ {{ item.montoPagado.toFixed(2) }}</td>
+              <td class="pending-text font-bold">S/ {{ item.saldoPendiente.toFixed(2) }}</td>
+              <td>
+                <span class="badge-status" [class]="item.estado.toLowerCase()">
+                  {{ item.estado }}
+                </span>
+              </td>
+              <td>
+                <button *ngIf="item.saldoPendiente > 0" (click)="openPaymentModal(item)" class="btn btn-primary btn-sm">
+                  💳 Registrar Pago
+                </button>
+                <span *ngIf="item.saldoPendiente === 0" class="text-success font-bold">✓ Cancelado</span>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredPurchases().length === 0">
+              <td colspan="9" class="empty-state">
+                <p>🔍 No se encontraron registros de compras a proveedores.</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ABONO PAYMENT MODAL -->
+<div class="modal-overlay" *ngIf="selectedPurchase() as p" (click)="closePaymentModal()">
+  <div class="modal-card modal-sm animate-fade-in" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>💳 Registrar Pago a Proveedor</h2>
+      <button class="close-btn" (click)="closePaymentModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <p>Proveedor: <strong>{{ p.proveedor }}</strong> (Factura {{ p.id }})</p>
+      <p>Saldo Pendiente actual: <strong class="danger-text">S/ {{ p.saldoPendiente.toFixed(2) }}</strong></p>
+
+      <div class="form-group mt-3">
+        <label>Monto a Abonar (S/) *</label>
+        <input 
+          type="number" 
+          step="0.01" 
+          [ngModel]="abonoMonto()" 
+          (ngModelChange)="abonoMonto.set($event)"
+          class="form-control price-input" 
+        />
+      </div>
+    </div>
+
+    <div class="modal-footer mt-3">
+      <button (click)="closePaymentModal()" class="btn btn-outline">Cancelar</button>
+      <button (click)="submitAbono()" class="btn btn-primary">✓ Confirmar Abono</button>
+    </div>
+  </div>
+</div>

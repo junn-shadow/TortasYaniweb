@@ -62,6 +62,18 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/admin/orders/orders.component').then(m => m.OrdersComponent)
       },
       {
+        path: 'payments',
+        loadComponent: () => import('./pages/admin/payments/payments.component').then(m => m.PaymentsComponent)
+      },
+      {
+        path: 'purchases',
+        loadComponent: () => import('./pages/admin/purchases/purchases.component').then(m => m.PurchasesComponent)
+      },
+      {
+        path: 'invoices',
+        loadComponent: () => import('./pages/admin/invoices/invoices.component').then(m => m.InvoicesComponent)
+      },
+      {
         path: 'users',
         loadComponent: () => import('./pages/admin/users/users.component').then(m => m.UsersComponent)
       }

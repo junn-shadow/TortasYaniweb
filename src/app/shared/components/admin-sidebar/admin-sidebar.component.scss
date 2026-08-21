@@ -1,0 +1,127 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.admin-sidebar {
+  width: 250px;
+  min-height: 100vh;
+  background: #561C24; /* Tono Borgoña sobrio institucional */
+  color: #FFFFFF;
+  padding: 1.25rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem 1rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1rem;
+
+  .logo-icon {
+    font-size: 1.6rem;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.3rem 0.45rem;
+    border-radius: 6px;
+  }
+
+  .logo-details {
+    h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin: 0;
+      letter-spacing: 0.2px;
+    }
+    .panel-subtitle {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.45);
+      letter-spacing: 1.2px;
+    }
+  }
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.nav-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+
+  .section-header {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.8px;
+    padding: 0.35rem 0.75rem;
+    text-transform: uppercase;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.75rem;
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.84rem;
+    font-weight: 500;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    .item-icon {
+      font-size: 0.95rem;
+      width: 18px;
+      display: inline-block;
+      text-align: center;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+    }
+
+    &.active {
+      background: rgba(0, 0, 0, 0.22);
+      color: #FFFFFF;
+      font-weight: 600;
+      border-left: 3px solid #D81B60;
+    }
+  }
+}
+
+.sidebar-footer {
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 1rem;
+
+  .btn-store-view {
+    display: block;
+    text-align: center;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #FFFFFF;
+    }
+  }
+}

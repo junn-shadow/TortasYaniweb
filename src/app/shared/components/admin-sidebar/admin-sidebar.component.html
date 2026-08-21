@@ -1,0 +1,93 @@
+<aside class="admin-sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-icon">🎂</span>
+    <div class="logo-details">
+      <h2>Tortas Yane</h2>
+      <span class="panel-subtitle">PANEL ADMIN</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+
+    <!-- SECCIÓN 1: PRODUCTOS -->
+    <div class="nav-section">
+      <span class="section-header">PRODUCTOS</span>
+      <a routerLink="/admin/products" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">🎂</span> Tortas / Productos
+      </a>
+      <a routerLink="/admin/products" [queryParams]="{tab: 'categories'}" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">🏷️</span> Categoría Torta
+      </a>
+      <a routerLink="/admin/products" [queryParams]="{tab: 'recipes'}" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">📖</span> Recetas de Tortas
+      </a>
+    </div>
+
+    <!-- SECCIÓN 2: PRODUCCIÓN & STOCK -->
+    <div class="nav-section">
+      <span class="section-header">PRODUCCIÓN & STOCK</span>
+      <a routerLink="/admin/inventory" [queryParams]="{tab: 'production'}" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">👩‍🍳</span> Producción de Torta
+      </a>
+      <a routerLink="/admin/inventory" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">📦</span> Insumos
+      </a>
+      <a routerLink="/admin/purchases" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">🏭</span> Proveedores
+      </a>
+      <a routerLink="/admin/inventory" [queryParams]="{tab: 'units'}" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">📏</span> Unidad de Medida
+      </a>
+    </div>
+
+    <!-- SECCIÓN 3: MOVIMIENTOS -->
+    <div class="nav-section">
+      <span class="section-header">MOVIMIENTOS</span>
+      <a routerLink="/admin/inventory" [queryParams]="{tab: 'kardex'}" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">➡️</span> Movimiento de Insumos
+      </a>
+      <a routerLink="/admin/inventory" [queryParams]="{tab: 'cake-movements'}" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">⇅</span> Movimiento de Tortas
+      </a>
+      <a routerLink="/admin/inventory" [queryParams]="{tab: 'mov-types'}" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">🏷️</span> Tipos de Movimientos
+      </a>
+    </div>
+
+    <!-- SECCIÓN 4: COMERCIAL -->
+    <div class="nav-section">
+      <span class="section-header">COMERCIAL</span>
+      <a routerLink="/admin/orders" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">🛍️</span> Venta de Tortas / Órdenes
+      </a>
+      <a routerLink="/admin/orders" [queryParams]="{tab: 'delivery'}" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">🚚</span> Delivery
+      </a>
+      <a routerLink="/admin/payments" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">💰</span> Validar Pagos / Reporte
+      </a>
+      <a routerLink="/admin/invoices" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">📄</span> Comprobantes SUNAT
+      </a>
+    </div>
+
+    <!-- SECCIÓN 5: ADMINISTRACIÓN -->
+    <div class="nav-section">
+      <span class="section-header">ADMINISTRACIÓN</span>
+      <a routerLink="/admin/users" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">👥</span> Personal / Usuarios
+      </a>
+      <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">📊</span> Panel & Métricas
+      </a>
+      <a routerLink="/admin/site-cms" routerLinkActive="active" class="nav-item">
+        <span class="item-icon">🌐</span> Configuración Web CMS
+      </a>
+    </div>
+
+  </nav>
+
+  <div class="sidebar-footer">
+    <a routerLink="/" class="btn-store-view">🌐 Ver Tienda Cliente</a>
+  </div>
+</aside>

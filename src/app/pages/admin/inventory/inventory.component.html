@@ -1,26 +1,7 @@
 <div class="admin-layout animate-fade-in">
 
-  <!-- ADMIN SIDEBAR -->
-  <aside class="admin-sidebar">
-    <div class="sidebar-logo">
-      <span class="logo-emoji">🍰</span>
-      <div class="logo-details">
-        <h2>Tortas Yani</h2>
-        <span>Panel Administrativo</span>
-      </div>
-    </div>
-
-    <nav class="sidebar-nav">
-      <a routerLink="/admin/dashboard" class="nav-item">📊 Inicio / Métricas</a>
-      <a routerLink="/admin/products" class="nav-item">🎂 Gestión de Tortas</a>
-      <a routerLink="/admin/inventory" class="nav-item active">📦 Gestión de Inventario</a>
-      <a routerLink="/admin/orders" class="nav-item">📋 Gestión de Pedidos</a>
-      <a routerLink="/admin/users" class="nav-item">👥 Gestión de Usuarios</a>
-      <hr />
-      <a routerLink="/" class="nav-item">🌐 Ver Web Cliente</a>
-      <button (click)="onLogout()" class="nav-item logout-btn">🚪 Cerrar Sesión</button>
-    </nav>
-  </aside>
+  <!-- REUSABLE ADMIN SIDEBAR -->
+  <app-admin-sidebar></app-admin-sidebar>
 
   <!-- MAIN ADMIN CONTENT -->
   <main class="admin-content-area">
@@ -185,9 +166,10 @@
                 <span class="category-badge">{{ item.categoria }}</span>
               </td>
               <td class="col-stock">
-                <div class="stock-value-cell">
+                <div class="stock-value-cell" [class.stock-critical-red]="item.stockActual <= item.stockMinimo">
                   <strong class="stock-num">{{ item.stockActual }}</strong>
                   <span class="unit-text">{{ item.unidadMedida }}</span>
+                  <span class="low-alert-tag" *ngIf="item.stockActual <= item.stockMinimo">⚠️ ¡Stock Bajo!</span>
                 </div>
               </td>
               <td class="col-min">

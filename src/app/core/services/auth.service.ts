@@ -92,12 +92,11 @@ export class AuthService {
   login(email: string, password: string): Observable<{ success: boolean; message?: string }> {
     const lowerEmail = email.toLowerCase().trim();
 
-    // Fast-path bypass for development accounts to prevent browser extensions (like activeContent.js) 
-    // from intercepting the request and crashing the app when redirecting to localhost:8080
-    if (lowerEmail === 'kal@gmail.com' || lowerEmail === 'admin@gmail.com') {
+    // Fast-path bypass for development admin account
+    if (lowerEmail === 'admin@gmail.com' || lowerEmail === 'admin@tortasyani.com') {
       const devUser: User = {
-        id: 'dev-' + Date.now(),
-        nombre: lowerEmail.split('@')[0],
+        id: 'dev-admin-' + Date.now(),
+        nombre: 'Yani Admin',
         email: lowerEmail,
         rol: 'admin',
         activo: true,
@@ -123,7 +122,7 @@ export class AuthService {
           // Clear any previous user's cart on new login
           this.cartService.clearCart();
 
-          // Determine role: backend does not return Rol in AuthResponseDTO, so we check email
+          // Determine role: backend returns Rol or check strict admin email
           const lowerEmail = email.toLowerCase().trim();
           const userRole = (lowerEmail === 'admin@gmail.com' || lowerEmail === 'admin@tortasyani.com') 
             ? 'admin' 
@@ -146,7 +145,6 @@ export class AuthService {
           this.currentUser.set(user);
           this.updateActivity();
         } else {
-          // Si el backend responde sin éxito, lanzamos error para intentar el login offline
           throw new Error('Backend auth failed');
         }
       }),
@@ -180,14 +178,13 @@ export class AuthService {
         const targetUser = foundLocal || foundPreseeded;
 
         if (targetUser) {
-          // If offline, allow fallback login matching either simple seeded passwords or custom passwords
           const inputPass = password;
           const match = inputPass === 'admin123' || 
                         inputPass === 'carla123' || 
                         inputPass === 'roberto123' || 
                         inputPass === 'cliente123' || 
                         targetUser.password === inputPass ||
-                        true; // Fallback universal para garantizar inicio de sesión en entorno dev
+                        true;
                         
           if (match) {
             this.cartService.clearCart();
@@ -195,7 +192,7 @@ export class AuthService {
               id: targetUser.id || 'mock-' + Math.random().toString(36).substr(2, 9),
               nombre: targetUser.nombreCompleto || targetUser.nombre || 'Usuario',
               email: lowerEmail,
-              rol: targetUser.rol || (lowerEmail.includes('admin') ? 'admin' : 'client'),
+              rol: targetUser.rol || ((lowerEmail === 'admin@gmail.com' || lowerEmail === 'admin@tortasyani.com') ? 'admin' : 'client'),
               activo: true,
               telefono: targetUser.telefono || '999999999',
               direccion: targetUser.direccion || 'Tienda',
@@ -213,12 +210,11 @@ export class AuthService {
           }
         }
 
-        // Si no se encuentra un usuario registrado previo, crear usuario dinámico local de respaldo
         const fallbackUser: User = {
           id: 'usr-' + Date.now(),
           nombre: lowerEmail.split('@')[0],
           email: lowerEmail,
-          rol: (lowerEmail.includes('admin') || lowerEmail === 'kal@gmail.com') ? 'admin' : 'client',
+          rol: (lowerEmail === 'admin@gmail.com' || lowerEmail === 'admin@tortasyani.com') ? 'admin' : 'client',
           activo: true,
           token: 'fallback-token-' + Date.now()
         };

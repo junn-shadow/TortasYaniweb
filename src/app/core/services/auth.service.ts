@@ -176,7 +176,7 @@ export class AuthService {
               id: 'mock-' + Math.random().toString(36).substr(2, 9),
               nombre: foundPreseeded.nombreCompleto || 'Usuario',
               email: lowerEmail,
-              rol: foundPreseeded.rol,
+              rol: foundPreseeded.rol as 'admin' | 'client',
               activo: true,
               telefono: foundPreseeded.telefono || '999999999',
               direccion: foundPreseeded.direccion || 'Tienda',

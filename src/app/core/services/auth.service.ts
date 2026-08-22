@@ -144,8 +144,6 @@ export class AuthService {
           localStorage.setItem('token', res.token);
           this.currentUser.set(user);
           this.updateActivity();
-        } else {
-          throw new Error('Backend auth failed');
         }
       }),
       map(res => ({ success: res.success, message: res.message })),
@@ -154,18 +152,6 @@ export class AuthService {
         
         const lowerEmail = email.toLowerCase().trim();
         
-        // Check local registered users list (created via admin or register screen offline)
-        let registeredUsers: any[] = [];
-        if (typeof window !== 'undefined') {
-          try {
-            registeredUsers = JSON.parse(localStorage.getItem('registered_users') || '[]');
-          } catch (e) {
-            registeredUsers = [];
-          }
-        }
-        
-        const foundLocal = registeredUsers.find((u: any) => u.email.toLowerCase().trim() === lowerEmail);
-
         // Pre-seeded mock accounts matching database seeds and dashboard
         const mockAccounts = [
           { email: 'admin@gmail.com', password: 'admin123', nombreCompleto: 'Yani Admin', rol: 'admin', telefono: '999999999', direccion: 'Tienda' },
@@ -175,27 +161,25 @@ export class AuthService {
         ];
         
         const foundPreseeded = mockAccounts.find(u => u.email === lowerEmail);
-        const targetUser = foundLocal || foundPreseeded;
 
-        if (targetUser) {
+        if (foundPreseeded) {
           const inputPass = password;
           const match = inputPass === 'admin123' || 
                         inputPass === 'carla123' || 
                         inputPass === 'roberto123' || 
                         inputPass === 'cliente123' || 
-                        targetUser.password === inputPass ||
-                        true;
+                        foundPreseeded.password === inputPass;
                         
           if (match) {
             this.cartService.clearCart();
             const user: User = {
-              id: targetUser.id || 'mock-' + Math.random().toString(36).substr(2, 9),
-              nombre: targetUser.nombreCompleto || targetUser.nombre || 'Usuario',
+              id: 'mock-' + Math.random().toString(36).substr(2, 9),
+              nombre: foundPreseeded.nombreCompleto || 'Usuario',
               email: lowerEmail,
-              rol: targetUser.rol || ((lowerEmail === 'admin@gmail.com' || lowerEmail === 'admin@tortasyani.com') ? 'admin' : 'client'),
+              rol: foundPreseeded.rol,
               activo: true,
-              telefono: targetUser.telefono || '999999999',
-              direccion: targetUser.direccion || 'Tienda',
+              telefono: foundPreseeded.telefono || '999999999',
+              direccion: foundPreseeded.direccion || 'Tienda',
               fotoPerfil: '',
               token: 'mock-jwt-token'
             };
@@ -210,21 +194,7 @@ export class AuthService {
           }
         }
 
-        const fallbackUser: User = {
-          id: 'usr-' + Date.now(),
-          nombre: lowerEmail.split('@')[0],
-          email: lowerEmail,
-          rol: (lowerEmail === 'admin@gmail.com' || lowerEmail === 'admin@tortasyani.com') ? 'admin' : 'client',
-          activo: true,
-          token: 'fallback-token-' + Date.now()
-        };
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('user', JSON.stringify(fallbackUser));
-          localStorage.setItem('token', fallbackUser.token!);
-          this.updateActivity();
-        }
-        this.currentUser.set(fallbackUser);
-        return of({ success: true, message: 'Inicio de sesión concedido' });
+        return of({ success: false, message: 'Credenciales inválidas o cuenta inexistente.' });
       })
     );
   }

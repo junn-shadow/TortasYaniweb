@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { CartService } from '../../../core/services/cart.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { MercadoPagoService } from '../../../core/services/mercado-pago.service';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 
 declare const L: any;
@@ -21,6 +22,7 @@ export class CheckoutComponent implements AfterViewInit {
   showPaymentQR = signal<boolean>(false);
   orderPlaced = signal<boolean>(false);
   generatedOrderId = signal<string>('');
+  mercadoPagoLoading = signal<boolean>(false);
 
   // Map state
   private map: any;
@@ -43,6 +45,7 @@ export class CheckoutComponent implements AfterViewInit {
     private fb: FormBuilder,
     public cartService: CartService,
     private authService: AuthService,
+    private mercadoPagoService: MercadoPagoService,
     private router: Router
   ) {
     const today = new Date();
@@ -94,7 +97,6 @@ export class CheckoutComponent implements AfterViewInit {
     if (!mapContainer || typeof L === 'undefined') return;
 
     try {
-      // Coordinates of Plaza Tupac Amaru, Wanchaq, Cusco
       const storeLat = -13.5222;
       const storeLon = -71.9675;
 
@@ -104,28 +106,23 @@ export class CheckoutComponent implements AfterViewInit {
         attribution: '&copy; OpenStreetMap'
       }).addTo(this.map);
 
-      // Marker for Plaza Tupac Amaru
       const storeMarker = L.marker([storeLat, storeLon]).addTo(this.map);
       storeMarker.bindPopup('🎂 <strong>Pastelería Tortas Yani</strong><br>Sede Plaza Túpac Amaru').openPopup();
 
-      // Delivery destination marker (slightly offset initially)
       const userLat = -13.5235;
       const userLon = -71.9660;
       this.deliveryMarker = L.marker([userLat, userLon], { draggable: true }).addTo(this.map);
       this.deliveryMarker.bindPopup('📍 <strong>Tu ubicación de entrega</strong><br>Arrástrame en el mapa').openPopup();
 
-      // Trigger initial cost and reverse geocode
       this.calculateDeliveryCost(userLat, userLon);
       this.reverseGeocode(userLat, userLon);
 
-      // Event listener for dragging
       this.deliveryMarker.on('dragend', () => {
         const pos = this.deliveryMarker.getLatLng();
         this.calculateDeliveryCost(pos.lat, pos.lng);
         this.reverseGeocode(pos.lat, pos.lng);
       });
 
-      // Event listener for map clicking
       this.map.on('click', (e: any) => {
         const pos = e.latlng;
         this.deliveryMarker.setLatLng(pos);
@@ -145,18 +142,17 @@ export class CheckoutComponent implements AfterViewInit {
     const distance = this.getDistanceFromLatLonInKm(storeLat, storeLon, lat, lon);
     this.distanceInKm.set(parseFloat(distance.toFixed(2)));
 
-    // S/ 10 base delivery cost for first 1.5 km, S/ 2.5 per extra km, capped at S/ 20
     let cost = 10;
     if (distance > 1.5) {
       cost += (distance - 1.5) * 2.5;
     }
     cost = Math.round(cost);
-    cost = Math.min(20, Math.max(10, cost)); // cap at S/20 maximum, S/10 minimum
+    cost = Math.min(20, Math.max(10, cost));
     this.deliveryCost.set(cost);
   }
 
   private getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371; // Earth radius
+    const R = 6371;
     const dLat = this.deg2rad(lat2 - lat1);
     const dLon = this.deg2rad(lon2 - lon1);
     const a =
@@ -193,18 +189,62 @@ export class CheckoutComponent implements AfterViewInit {
 
     const { metodoPago } = this.checkoutForm.value;
 
-    if (metodoPago === 'Yape' || metodoPago === 'Plin') {
+    if (metodoPago === 'MercadoPago') {
+      this.processMercadoPago();
+    } else if (metodoPago === 'Yape' || metodoPago === 'Plin') {
       this.showPaymentQR.set(true);
     } else {
       this.placeOrder();
     }
   }
 
-  placeOrder(): void {
+  processMercadoPago(): void {
+    this.mercadoPagoLoading.set(true);
     this.isSubmitting = true;
     const ticketId = 'TK-' + Math.floor(1000 + Math.random() * 9000);
     this.generatedOrderId.set(ticketId);
 
+    const formValues = this.checkoutForm.value;
+    const currentUser = this.authService.currentUser();
+
+    const items = [
+      ...this.cartService.items().map(i => ({
+        title: `${i.nombre} (${i.tamanio})`,
+        quantity: i.cantidad,
+        currency_id: 'PEN',
+        unit_price: i.precio
+      }))
+    ];
+
+    if (this.shippingCost() > 0) {
+      items.push({
+        title: 'Costo de Envío / Delivery',
+        quantity: 1,
+        currency_id: 'PEN',
+        unit_price: this.shippingCost()
+      });
+    }
+
+    const payer = {
+      name: formValues.clienteName,
+      email: currentUser?.email || 'cliente@tortasyani.com'
+    };
+
+    this.mercadoPagoService.createPreference(items, payer, ticketId).subscribe(pref => {
+      this.mercadoPagoLoading.set(false);
+      this.isSubmitting = false;
+
+      this.placeOrderRecord(ticketId);
+
+      if (pref && pref.init_point) {
+        window.open(pref.init_point, '_blank');
+      } else {
+        alert('Se ha registrado tu orden. Si Mercado Pago no se abrió automáticamente, el pago se coordinará al entregar.');
+      }
+    });
+  }
+
+  placeOrderRecord(ticketId: string): void {
     const formValues = this.checkoutForm.value;
 
     const newOrder = {
@@ -233,12 +273,15 @@ export class CheckoutComponent implements AfterViewInit {
     adminOrdersList.unshift(newOrder);
     localStorage.setItem('admin_orders', JSON.stringify(adminOrdersList));
 
-    setTimeout(() => {
-      this.isSubmitting = false;
-      this.showPaymentQR.set(false);
-      this.orderPlaced.set(true);
-      this.cartService.clearCart();
-    }, 1500);
+    this.showPaymentQR.set(false);
+    this.orderPlaced.set(true);
+    this.cartService.clearCart();
+  }
+
+  placeOrder(): void {
+    const ticketId = 'TK-' + Math.floor(1000 + Math.random() * 9000);
+    this.generatedOrderId.set(ticketId);
+    this.placeOrderRecord(ticketId);
   }
 
   cancelQR(): void {

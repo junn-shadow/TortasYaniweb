@@ -124,4 +124,24 @@
       color: #FFFFFF;
     }
   }
+
+  .btn-logout {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem 0.75rem;
+    background: #E11D48;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: #BE123C;
+    }
+  }
 }

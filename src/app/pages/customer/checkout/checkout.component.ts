@@ -23,6 +23,7 @@ export class CheckoutComponent implements AfterViewInit {
   orderPlaced = signal<boolean>(false);
   generatedOrderId = signal<string>('');
   mercadoPagoLoading = signal<boolean>(false);
+  showMercadoPagoSimulator = signal<boolean>(false);
 
   // Map state
   private map: any;
@@ -230,18 +231,31 @@ export class CheckoutComponent implements AfterViewInit {
       email: currentUser?.email || 'cliente@tortasyani.com'
     };
 
-    this.mercadoPagoService.createPreference(items, payer, ticketId).subscribe(pref => {
-      this.mercadoPagoLoading.set(false);
-      this.isSubmitting = false;
-
-      this.placeOrderRecord(ticketId);
-
-      if (pref && pref.init_point) {
-        window.open(pref.init_point, '_blank');
-      } else {
-        alert('Se ha registrado tu orden. Si Mercado Pago no se abrió automáticamente, el pago se coordinará al entregar.');
+    this.mercadoPagoService.createPreference(items, payer, ticketId).subscribe({
+      next: (pref) => {
+        this.mercadoPagoLoading.set(false);
+        this.isSubmitting = false;
+        
+        if (pref && pref.init_point) {
+          window.open(pref.init_point, '_blank');
+        }
+        this.showMercadoPagoSimulator.set(true);
+      },
+      error: () => {
+        this.mercadoPagoLoading.set(false);
+        this.isSubmitting = false;
+        this.showMercadoPagoSimulator.set(true);
       }
     });
+  }
+
+  confirmMercadoPagoPayment(): void {
+    this.showMercadoPagoSimulator.set(false);
+    this.placeOrderRecord(this.generatedOrderId());
+  }
+
+  cancelMercadoPago(): void {
+    this.showMercadoPagoSimulator.set(false);
   }
 
   placeOrderRecord(ticketId: string): void {

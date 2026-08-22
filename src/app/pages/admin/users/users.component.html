@@ -1,37 +1,17 @@
 <div class="admin-layout animate-fade-in">
   
   <!-- ADMIN SIDEBAR -->
-  <aside class="admin-sidebar">
-    <div class="sidebar-logo">
-      <span class="logo-emoji">🍰</span>
-      <div class="logo-details">
-        <h2>Tortas Yani</h2>
-        <span>Panel Administrativo</span>
-      </div>
-    </div>
-    
-    <nav class="sidebar-nav">
-      <a routerLink="/admin/dashboard" class="nav-item">📊 Inicio / Métricas</a>
-      <a routerLink="/admin/products" class="nav-item">🎂 Gestión de Tortas</a>
-      <a routerLink="/admin/inventory" class="nav-item">📦 Gestión de Inventario</a>
-      <a routerLink="/admin/orders" class="nav-item">📋 Gestión de Pedidos</a>
-      <a routerLink="/admin/users" class="nav-item active">👥 Gestión de Usuarios</a>
-
-      <hr />
-      <a routerLink="/" class="nav-item">🌐 Ver Web Cliente</a>
-      <button (click)="onLogout()" class="nav-item logout-btn">🚪 Cerrar Sesión</button>
-    </nav>
-  </aside>
+  <app-admin-sidebar></app-admin-sidebar>
 
   <!-- MAIN ADMIN CONTENT -->
   <main class="admin-content-area">
     <header class="admin-topbar section-title-action">
       <div>
-        <h1>Gestión de Usuarios 👥</h1>
+        <h1>Gestión de Usuarios</h1>
         <p>Administra los clientes registrados y asigna roles de administración del sistema.</p>
       </div>
       <button (click)="openAddModal()" class="btn btn-primary">
-        Crear Usuario 👤
+        Crear Usuario
       </button>
     </header>
 
@@ -73,8 +53,8 @@
               </button>
             </td>
             <td class="text-right actions-cell">
-              <button (click)="openEditModal(user)" class="btn-action edit" title="Editar">✏️</button>
-              <button (click)="onDelete(user.id)" class="btn-action delete" title="Eliminar">🗑️</button>
+              <button (click)="openEditModal(user)" class="btn-action edit" title="Editar">Editar</button>
+              <button (click)="onDelete(user.id)" class="btn-action delete" title="Eliminar">Eliminar</button>
             </td>
           </tr>
         </tbody>
@@ -87,7 +67,7 @@
 <!-- ADD/EDIT USER FORM OVERLAY -->
 <div class="modal-overlay" *ngIf="showFormModal()" (click)="closeModal()">
   <div class="modal-card user-modal animate-fade-in" (click)="$event.stopPropagation()">
-    <button class="close-btn" (click)="closeModal()">✖️</button>
+    <button class="close-btn" (click)="closeModal()">✕</button>
     
     <h3>{{ isEditing() ? 'Editar Datos del Usuario' : 'Crear Nuevo Usuario' }}</h3>
     <hr />

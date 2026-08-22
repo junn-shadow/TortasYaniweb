@@ -1,35 +1,14 @@
 <div class="admin-layout animate-fade-in">
   
   <!-- ADMIN SIDEBAR -->
-  <aside class="admin-sidebar">
-    <div class="sidebar-logo">
-      <span class="logo-emoji">🍰</span>
-      <div class="logo-details">
-        <h2>Tortas Yani</h2>
-        <span>Panel Administrativo</span>
-      </div>
-    </div>
-    
-    <nav class="sidebar-nav">
-      <a routerLink="/admin/dashboard" class="nav-item active">Inicio / Métricas</a>
-      <a routerLink="/admin/site-cms" class="nav-item">Editar Sitio Web (CMS)</a>
-      <a routerLink="/admin/products" class="nav-item">Gestión de Tortas</a>
-      <a routerLink="/admin/inventory" class="nav-item">Gestión de Inventario</a>
-      <a routerLink="/admin/orders" class="nav-item">Gestión de Pedidos</a>
-      <a routerLink="/admin/users" class="nav-item">Gestión de Usuarios</a>
-
-      <hr />
-      <a routerLink="/" class="nav-item">Ver Web Cliente</a>
-      <button (click)="onLogout()" class="nav-item logout-btn">Cerrar Sesión</button>
-    </nav>
-  </aside>
+  <app-admin-sidebar></app-admin-sidebar>
 
   <!-- MAIN ADMIN CONTENT -->
   <main class="admin-content-area">
     <!-- Top Bar -->
     <header class="admin-topbar">
       <div class="header-greeting">
-        <h1>Yani Admin 👑</h1>
+        <h1>Yani Admin</h1>
         <p>Control operativo y métricas comerciales del negocio.</p>
       </div>
     </header>
@@ -39,41 +18,37 @@
       <!-- Metric 1 -->
       <div class="metric-card card pink-card">
         <div class="metric-header">
-          <span class="metric-icon">💰</span>
           <h3>Ventas Hoy</h3>
         </div>
         <span class="metric-value">S/ {{ stats().ventasHoy }}</span>
-        <span class="metric-trend success-text">📈 +15% vs ayer</span>
+        <span class="metric-trend success-text">+15% vs ayer</span>
       </div>
 
       <!-- Metric 2 -->
       <div class="metric-card card pink-card">
         <div class="metric-header">
-          <span class="metric-icon">📦</span>
           <h3>Pedidos Activos</h3>
         </div>
         <span class="metric-value">{{ stats().pedidosActivosCount }} Nuevos</span>
-        <span class="metric-trend warning-text">🕒 Pendientes de entrega</span>
+        <span class="metric-trend warning-text">Pendientes de entrega</span>
       </div>
 
       <!-- Metric 3 -->
       <div class="metric-card card pink-card">
         <div class="metric-header">
-          <span class="metric-icon">🍰</span>
           <h3>Catálogo Activo</h3>
         </div>
         <span class="metric-value">{{ stats().productosCount }} Tortas</span>
-        <span class="metric-trend text-light">🛒 En base de datos</span>
+        <span class="metric-trend text-light">En base de datos</span>
       </div>
 
       <!-- Metric 4 -->
       <div class="metric-card card pink-card">
         <div class="metric-header">
-          <span class="metric-icon">👥</span>
           <h3>Clientes</h3>
         </div>
         <span class="metric-value">{{ stats().usuariosCount }} Registrados</span>
-        <span class="metric-trend success-text">🟢 Usuarios activos</span>
+        <span class="metric-trend success-text">Usuarios activos</span>
       </div>
     </section>
 
@@ -119,19 +94,16 @@
         
         <div class="shortcut-buttons">
           <a routerLink="/admin/products" class="shortcut-btn">
-            <span class="btn-icon">🎂</span>
             <strong>Gestión de Tortas</strong>
             <span>Agregar y editar productos</span>
           </a>
 
           <a routerLink="/admin/orders" class="shortcut-btn">
-            <span class="btn-icon">📋</span>
             <strong>Gestión de Pedidos</strong>
             <span>Ver y cambiar estados</span>
           </a>
 
           <a routerLink="/admin/users" class="shortcut-btn">
-            <span class="btn-icon">👥</span>
             <strong>Gestión de Usuarios</strong>
             <span>Editar roles y accesos</span>
           </a>

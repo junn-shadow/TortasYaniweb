@@ -1,37 +1,17 @@
 <div class="admin-layout animate-fade-in">
   
   <!-- ADMIN SIDEBAR -->
-  <aside class="admin-sidebar">
-    <div class="sidebar-logo">
-      <span class="logo-emoji">🍰</span>
-      <div class="logo-details">
-        <h2>Tortas Yani</h2>
-        <span>Panel Administrativo</span>
-      </div>
-    </div>
-    
-    <nav class="sidebar-nav">
-      <a routerLink="/admin/dashboard" class="nav-item">📊 Inicio / Métricas</a>
-      <a routerLink="/admin/products" class="nav-item active">🎂 Gestión de Tortas</a>
-      <a routerLink="/admin/inventory" class="nav-item">📦 Gestión de Inventario</a>
-      <a routerLink="/admin/orders" class="nav-item">📋 Gestión de Pedidos</a>
-      <a routerLink="/admin/users" class="nav-item">👥 Gestión de Usuarios</a>
-
-      <hr />
-      <a routerLink="/" class="nav-item">🌐 Ver Web Cliente</a>
-      <button (click)="onLogout()" class="nav-item logout-btn">🚪 Cerrar Sesión</button>
-    </nav>
-  </aside>
+  <app-admin-sidebar></app-admin-sidebar>
 
   <!-- MAIN ADMIN CONTENT -->
   <main class="admin-content-area">
     <header class="admin-topbar section-title-action">
       <div>
-        <h1>Gestión de Tortas 🍰</h1>
+        <h1>Gestión de Tortas</h1>
         <p>Añade, edita o elimina tortas y postres del catálogo de la tienda.</p>
       </div>
       <button (click)="openAddModal()" class="btn btn-primary">
-        Añadir Producto ➕
+        Añadir Producto
       </button>
     </header>
 
@@ -63,8 +43,8 @@
               <span *ngIf="!prod.badge" class="text-muted">-</span>
             </td>
             <td class="text-right actions-cell">
-              <button (click)="openEditModal(prod)" class="btn-action edit" title="Editar">✏️</button>
-              <button (click)="onDelete(prod.id)" class="btn-action delete" title="Eliminar">🗑️</button>
+              <button (click)="openEditModal(prod)" class="btn-action edit" title="Editar">Editar</button>
+              <button (click)="onDelete(prod.id)" class="btn-action delete" title="Eliminar">Eliminar</button>
             </td>
           </tr>
         </tbody>
@@ -77,7 +57,7 @@
 <!-- ADD/EDIT PRODUCT OVERLAY MODAL -->
 <div class="modal-overlay" *ngIf="showFormModal()" (click)="closeModal()">
   <div class="modal-card animate-fade-in" (click)="$event.stopPropagation()">
-    <button class="close-btn" (click)="closeModal()">✖️</button>
+    <button class="close-btn" (click)="closeModal()">✕</button>
     
     <h3>{{ isEditing() ? 'Editar Producto' : 'Añadir Nuevo Producto' }}</h3>
     <hr />
@@ -155,7 +135,6 @@
             <img *ngIf="uploadedImageUrl()" [src]="uploadedImageUrl()" alt="Vista previa" class="preview-thumb" />
             
             <div *ngIf="!uploadedImageUrl() && !imageUploading()" class="upload-placeholder">
-              <span class="upload-icon">📷</span>
               <span>No hay imagen cargada</span>
             </div>
 
@@ -167,7 +146,7 @@
 
           <div class="file-input-wrapper">
             <button type="button" class="btn btn-secondary w-100 btn-file-trigger">
-              📂 Seleccionar Imagen
+              Seleccionar Imagen
             </button>
             <input type="file" accept="image/*" (change)="onFileSelected($event)" class="real-file-input" />
           </div>

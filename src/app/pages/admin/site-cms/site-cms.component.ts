@@ -5,11 +5,12 @@ import { RouterLink } from '@angular/router';
 import { SiteConfigService, SiteConfig } from '../../../core/services/site-config.service';
 import { CloudinaryService } from '../../../core/services/cloudinary.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { AdminSidebarComponent } from '../../../shared/components/admin-sidebar/admin-sidebar.component';
 
 @Component({
   selector: 'app-site-cms',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, AdminSidebarComponent],
   templateUrl: './site-cms.component.html',
   styleUrl: './site-cms.component.scss'
 })

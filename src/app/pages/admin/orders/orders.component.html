@@ -14,13 +14,13 @@
     <!-- Header Topbar -->
     <header class="admin-topbar">
       <div class="header-title">
-        <h1>Gestión de Órdenes / Ventas 🛍️</h1>
+        <h1>Gestión de Órdenes / Ventas</h1>
         <p>Control de pedidos, entregas, pagos parciales (50%) y reportes de ventas.</p>
       </div>
 
       <div class="header-actions">
         <button class="btn btn-excel" (click)="exportExcelReport()">
-          📊 Exportar a Excel
+          Exportar a Excel
         </button>
       </div>
     </header>
@@ -29,7 +29,6 @@
     <section class="metrics-grid">
       <div class="metric-card gold-card">
         <div class="metric-header">
-          <span class="metric-icon">💰</span>
           <h3>Total Ventas (Filtrado)</h3>
         </div>
         <span class="metric-value">S/ {{ totalSalesSum().toFixed(2) }}</span>
@@ -38,7 +37,6 @@
 
       <div class="metric-card pink-card">
         <div class="metric-header">
-          <span class="metric-icon">📥</span>
           <h3>Monto Cobrado (50% + Saldos)</h3>
         </div>
         <span class="metric-value">S/ {{ totalCollectedSum().toFixed(2) }}</span>
@@ -47,7 +45,6 @@
 
       <div class="metric-card warning-card">
         <div class="metric-header">
-          <span class="metric-icon">⏳</span>
           <h3>Saldos Por Cobrar (50%)</h3>
         </div>
         <span class="metric-value danger-text">S/ {{ totalPendingSum().toFixed(2) }}</span>
@@ -56,7 +53,6 @@
 
       <div class="metric-card info-card">
         <div class="metric-header">
-          <span class="metric-icon">📦</span>
           <h3>Total Órdenes</h3>
         </div>
         <span class="metric-value">{{ filteredOrders().length }} Pedidos</span>
@@ -67,7 +63,6 @@
     <!-- Filter and Search Controls Bar -->
     <div class="controls-card card">
       <div class="search-box">
-        <span class="search-icon">🔍</span>
         <input 
           type="text" 
           placeholder="Buscar por ID, Cliente, DNI o Dirección..." 
@@ -134,7 +129,7 @@
                 <div class="payment-split-badge">
                   <span class="advance-text">50%: S/ {{ (order.montoAdelanto || order.total / 2).toFixed(2) }}</span>
                   <span class="pending-text" *ngIf="(order.saldoPendiente || 0) > 0">Pend: S/ {{ order.saldoPendiente?.toFixed(2) }}</span>
-                  <span class="paid-text" *ngIf="(order.saldoPendiente || 0) === 0">✓ Pagado</span>
+                  <span class="paid-text" *ngIf="(order.saldoPendiente || 0) === 0">Pagado</span>
                 </div>
               </td>
               <td>
@@ -150,10 +145,10 @@
               <td>
                 <div class="action-buttons">
                   <button (click)="openDetails(order)" class="btn btn-outline btn-sm" title="Ver Detalle de Orden">
-                    👁️ Ver Detalle
+                    Ver Detalle
                   </button>
                   <button (click)="deleteOrder(order.id)" class="btn btn-danger btn-sm" title="Eliminar Orden">
-                    🗑️
+                    Eliminar
                   </button>
                 </div>
               </td>
@@ -161,7 +156,7 @@
 
             <tr *ngIf="filteredOrders().length === 0">
               <td colspan="8" class="empty-state">
-                <p>🔍 No se encontraron órdenes que coincidan con los filtros aplicados.</p>
+                <p>No se encontraron órdenes que coincidan con los filtros aplicados.</p>
               </td>
             </tr>
           </tbody>
@@ -176,14 +171,14 @@
 <div class="modal-overlay" *ngIf="selectedOrder() as order" (click)="closeDetails()">
   <div class="modal-card detail-modal animate-fade-in" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2>📋 Detalle de Pedido: {{ order.id }}</h2>
+      <h2>Detalle de Pedido: {{ order.id }}</h2>
       <button class="close-btn" (click)="closeDetails()">✕</button>
     </div>
 
     <div class="details-grid">
       <!-- Client info -->
       <div class="details-card">
-        <h4>👤 Datos del Cliente</h4>
+        <h4>Datos del Cliente</h4>
         <p><strong>Nombre:</strong> {{ order.cliente }}</p>
         <p><strong>DNI / Documento:</strong> {{ order.dniCliente || 'No registrado' }}</p>
         <p><strong>Teléfono:</strong> {{ order.telefono }}</p>
@@ -193,7 +188,7 @@
 
       <!-- Payment info (50% Partial Payment Structure) -->
       <div class="details-card">
-        <h4>💰 Estado de Pago & Transacción</h4>
+        <h4>Estado de Pago & Transacción</h4>
         <p><strong>Método:</strong> {{ order.metodoPago || 'Yape / Plin' }}</p>
         <p><strong>Estado Pago:</strong> 
           <span class="badge-status">{{ order.estadoPago || 'Aprobado' }}</span>
@@ -209,7 +204,7 @@
 
     <!-- Ordered items list -->
     <div class="details-items card mt-3">
-      <h4>🎂 Productos Solicitados</h4>
+      <h4>Productos Solicitados</h4>
       <table class="admin-table mt-2">
         <thead>
           <tr>

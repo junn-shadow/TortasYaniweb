@@ -14,13 +14,13 @@
     <!-- Top Bar -->
     <header class="admin-topbar">
       <div class="header-greeting">
-        <h1>Gestión de Inventario 📦</h1>
+        <h1>Gestión de Inventario</h1>
         <p>Control de insumos, materias primas, stock de productos y registro Kardex en tiempo real.</p>
       </div>
 
       <div class="header-actions">
         <button class="btn btn-primary" (click)="openNewItemModal()">
-          ➕ Nuevo Insumo
+          Nuevo Insumo
         </button>
       </div>
     </header>
@@ -29,7 +29,6 @@
     <section class="metrics-grid" *ngIf="inventoryService.summary() as stats">
       <div class="metric-card card gold-card">
         <div class="metric-header">
-          <span class="metric-icon">💰</span>
           <h3>Valor del Inventario</h3>
         </div>
         <span class="metric-value">S/ {{ stats.valorTotalInventario.toFixed(2) }}</span>
@@ -38,7 +37,6 @@
 
       <div class="metric-card card pink-card">
         <div class="metric-header">
-          <span class="metric-icon">📦</span>
           <h3>Total Insumos</h3>
         </div>
         <span class="metric-value">{{ stats.totalItems }} Ítems</span>
@@ -47,7 +45,6 @@
 
       <div class="metric-card card warning-card" [class.alert-border]="stats.itemsStockBajo > 0">
         <div class="metric-header">
-          <span class="metric-icon">⚠️</span>
           <h3>Stock Crítico</h3>
         </div>
         <span class="metric-value" [class.danger-text]="stats.itemsStockBajo > 0">
@@ -58,7 +55,6 @@
 
       <div class="metric-card card pink-card">
         <div class="metric-header">
-          <span class="metric-icon">📜</span>
           <h3>Movimientos Hoy</h3>
         </div>
         <span class="metric-value">{{ stats.movimientosHoyCount }} Registros</span>
@@ -72,21 +68,21 @@
         class="tab-btn" 
         [class.active]="activeTab() === 'supplies'"
         (click)="activeTab.set('supplies')">
-        🧪 Insumos y Materia Prima
+        Insumos y Materia Prima
       </button>
 
       <button 
         class="tab-btn" 
         [class.active]="activeTab() === 'products'"
         (click)="activeTab.set('products')">
-        🎂 Stock de Productos Finales
+        Stock de Productos Finales
       </button>
 
       <button 
         class="tab-btn" 
         [class.active]="activeTab() === 'kardex'"
         (click)="activeTab.set('kardex')">
-        📜 Bitácora Kardex
+        Bitácora Kardex
       </button>
     </div>
 
@@ -96,7 +92,6 @@
       <!-- Filter and Search Controls -->
       <div class="table-controls">
         <div class="search-box">
-          <span class="search-icon">🔍</span>
           <input 
             type="text" 
             placeholder="Buscar por nombre, código o proveedor..." 
@@ -128,11 +123,11 @@
             <button 
               class="pill-btn warning-pill" 
               [class.active]="stockStatusFilter() === 'LOW'"
-              (click)="stockStatusFilter.set('LOW')">⚠️ Poco Stock</button>
+              (click)="stockStatusFilter.set('LOW')">Poco Stock</button>
             <button 
               class="pill-btn danger-pill" 
               [class.active]="stockStatusFilter() === 'OUT'"
-              (click)="stockStatusFilter.set('OUT')">🔴 Agotados</button>
+              (click)="stockStatusFilter.set('OUT')">Agotados</button>
           </div>
         </div>
       </div>
@@ -169,7 +164,7 @@
                 <div class="stock-value-cell" [class.stock-critical-red]="item.stockActual <= item.stockMinimo">
                   <strong class="stock-num">{{ item.stockActual }}</strong>
                   <span class="unit-text">{{ item.unidadMedida }}</span>
-                  <span class="low-alert-tag" *ngIf="item.stockActual <= item.stockMinimo">⚠️ ¡Stock Bajo!</span>
+                  <span class="low-alert-tag" *ngIf="item.stockActual <= item.stockMinimo">¡Stock Bajo!</span>
                 </div>
               </td>
               <td class="col-min">
@@ -192,34 +187,31 @@
                     class="btn-action btn-add-stock" 
                     title="Añadir Stock (+)"
                     (click)="openAdjustModal(item, 'ENTRADA')">
-                    ➕
+                    +
                   </button>
                   <button 
                     class="btn-action btn-sub-stock" 
                     title="Consumir / Restar Stock (-)"
                     (click)="openAdjustModal(item, 'SALIDA')">
-                    ➖
+                    -
                   </button>
                   <button 
                     class="btn-action btn-edit-item" 
                     title="Editar Insumo"
                     (click)="openEditItemModal(item)">
-                    ✏️
+                    Editar
                   </button>
                   <button 
                     class="btn-action btn-delete-item" 
                     title="Eliminar Insumo"
                     (click)="confirmDeleteItem(item)">
-                    🗑️
+                    Eliminar
                   </button>
                 </div>
               </td>
-            </tr>
-
-
-            <tr *ngIf="filteredSupplies().length === 0">
+            </tr>            <tr *ngIf="filteredSupplies().length === 0">
               <td colspan="9" class="empty-state">
-                <p>🔍 No se encontraron insumos con los filtros seleccionados.</p>
+                <p>No se encontraron insumos con los filtros seleccionados.</p>
               </td>
             </tr>
           </tbody>
@@ -250,7 +242,7 @@
             </div>
           </div>
           <button class="btn btn-outline btn-sm" (click)="openProductStockModal(product)">
-            ⚙️ Cambiar Stock
+            Cambiar Stock
           </button>
         </div>
       </div>
@@ -287,12 +279,12 @@
                   [class.mov-in]="mov.tipo === 'ENTRADA'"
                   [class.mov-out]="mov.tipo === 'SALIDA'"
                   [class.mov-waste]="mov.tipo === 'MERMA'">
-                  {{ mov.tipo === 'ENTRADA' ? '📥 Entrada' : (mov.tipo === 'SALIDA' ? '📤 Salida' : '⚠️ Merma') }}
+                  {{ mov.tipo === 'ENTRADA' ? 'Entrada' : (mov.tipo === 'SALIDA' ? 'Salida' : 'Merma') }}
                 </span>
               </td>
               <td><strong>{{ mov.cantidad }} {{ mov.unidadMedida }}</strong></td>
               <td>{{ mov.motivo }}</td>
-              <td><span class="user-tag">👤 {{ mov.usuario }}</span></td>
+              <td><span class="user-tag">{{ mov.usuario }}</span></td>
             </tr>
           </tbody>
         </table>
@@ -306,7 +298,7 @@
 <div *ngIf="showItemModal()" class="modal-overlay animate-fade-in">
   <div class="modal-card card">
     <div class="modal-header">
-      <h2>{{ isEditing() ? '✏️ Editar Insumo' : '➕ Registrar Nuevo Insumo' }}</h2>
+      <h2>{{ isEditing() ? 'Editar Insumo' : 'Registrar Nuevo Insumo' }}</h2>
       <button class="close-btn" (click)="closeItemModal()">✕</button>
     </div>
 
@@ -361,7 +353,7 @@
         </div>
 
         <div class="form-group">
-          <label>Stock Mínimo (Alerta ⚠️)</label>
+          <label>Stock Mínimo (Alerta)</label>
           <input 
             type="number" 
             [(ngModel)]="currentItem().stockMinimo" 
@@ -400,7 +392,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-outline" (click)="closeItemModal()">Cancelar</button>
         <button type="submit" class="btn btn-primary">
-          💾 {{ isEditing() ? 'Guardar Cambios' : 'Registrar Insumo' }}
+          {{ isEditing() ? 'Guardar Cambios' : 'Registrar Insumo' }}
         </button>
       </div>
     </form>
@@ -411,7 +403,7 @@
 <div *ngIf="showAdjustModal()" class="modal-overlay animate-fade-in">
   <div class="modal-card card modal-sm">
     <div class="modal-header">
-      <h2>⚙️ Registrar Movimiento de Stock</h2>
+      <h2>Registrar Movimiento de Stock</h2>
       <button class="close-btn" (click)="closeAdjustModal()">✕</button>
     </div>
 
@@ -426,21 +418,21 @@
             class="type-btn type-in" 
             [class.active]="adjustData().tipo === 'ENTRADA'"
             (click)="adjustData().tipo = 'ENTRADA'">
-            📥 Entrada / Compra
+            Entrada / Compra
           </button>
           <button 
             type="button" 
             class="type-btn type-out" 
             [class.active]="adjustData().tipo === 'SALIDA'"
             (click)="adjustData().tipo = 'SALIDA'">
-            📤 Salida / Consumo
+            Salida / Consumo
           </button>
           <button 
             type="button" 
             class="type-btn type-waste" 
             [class.active]="adjustData().tipo === 'MERMA'"
             (click)="adjustData().tipo = 'MERMA'">
-            ⚠️ Merma / Dañado
+            Merma / Dañado
           </button>
         </div>
       </div>
@@ -481,7 +473,7 @@
 <div *ngIf="showProductStockModal()" class="modal-overlay animate-fade-in">
   <div class="modal-card card modal-sm">
     <div class="modal-header">
-      <h2>🎂 Stock de Torta Final</h2>
+      <h2>Stock de Torta Final</h2>
       <button class="close-btn" (click)="closeProductStockModal()">✕</button>
     </div>
 

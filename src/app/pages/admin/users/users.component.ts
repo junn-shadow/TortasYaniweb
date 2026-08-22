@@ -5,11 +5,12 @@ import { RouterLink } from '@angular/router';
 import { User } from '../../../core/models/models';
 import { AuthService } from '../../../core/services/auth.service';
 import { UsersService } from '../../../core/services/users.service';
+import { AdminSidebarComponent } from '../../../shared/components/admin-sidebar/admin-sidebar.component';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, AdminSidebarComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })

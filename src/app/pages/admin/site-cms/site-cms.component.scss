@@ -1,7 +1,8 @@
 .admin-layout {
-  display: flex;
+  display: grid;
+  grid-template-columns: 250px 1fr;
   min-height: 100vh;
-  background-color: var(--background-color);
+  background-color: #F8FAFC;
 }
 
 .admin-sidebar {

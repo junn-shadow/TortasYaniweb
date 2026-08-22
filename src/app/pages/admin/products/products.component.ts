@@ -6,11 +6,12 @@ import { ProductsService } from '../../../core/services/products.service';
 import { CloudinaryService } from '../../../core/services/cloudinary.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Product } from '../../../core/models/models';
+import { AdminSidebarComponent } from '../../../shared/components/admin-sidebar/admin-sidebar.component';
 
 @Component({
   selector: 'app-admin-products',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, AdminSidebarComponent],
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss'
 })

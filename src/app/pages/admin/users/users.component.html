@@ -17,48 +17,50 @@
 
     <!-- Users Table Card -->
     <div class="table-card card">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Rol</th>
-            <th>Estado</th>
-            <th class="text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let user of usersService.users()">
-            <td>
-              <div class="user-info-cell">
-                <span class="avatar-letter">{{ user.nombre.charAt(0).toUpperCase() }}</span>
-                <strong>{{ user.nombre }}</strong>
-              </div>
-            </td>
-            <td>{{ user.email }}</td>
-            <td>
-              <span class="rol-badge" [class.admin]="user.rol === 'admin'">
-                {{ user.rol === 'admin' ? 'Administrador' : 'Cliente' }}
-              </span>
-            </td>
-            <td>
-              <!-- Interactive Switch Toggle -->
-              <button 
-                (click)="toggleActive(user)" 
-                class="btn-toggle" 
-                [class.active]="user.activo"
-                [title]="user.activo ? 'Desactivar usuario' : 'Activar usuario'"
-              >
-                <span class="toggle-dot"></span>
-              </button>
-            </td>
-            <td class="text-right actions-cell">
-              <button (click)="openEditModal(user)" class="btn-action edit" title="Editar">Editar</button>
-              <button (click)="onDelete(user.id)" class="btn-action delete" title="Eliminar">Eliminar</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th class="text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of usersService.users()">
+              <td>
+                <div class="user-info-cell">
+                  <span class="avatar-letter">{{ user.nombre.charAt(0).toUpperCase() }}</span>
+                  <strong>{{ user.nombre }}</strong>
+                </div>
+              </td>
+              <td>{{ user.email }}</td>
+              <td>
+                <span class="rol-badge" [class.admin]="user.rol === 'admin'">
+                  {{ user.rol === 'admin' ? 'Administrador' : 'Cliente' }}
+                </span>
+              </td>
+              <td>
+                <!-- Interactive Switch Toggle -->
+                <button 
+                  (click)="toggleActive(user)" 
+                  class="btn-toggle" 
+                  [class.active]="user.activo"
+                  [title]="user.activo ? 'Desactivar usuario' : 'Activar usuario'"
+                >
+                  <span class="toggle-dot"></span>
+                </button>
+              </td>
+              <td class="text-right actions-cell">
+                <button (click)="openEditModal(user)" class="btn-action edit" title="Editar">Editar</button>
+                <button (click)="onDelete(user.id)" class="btn-action delete" title="Eliminar">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
   </main>

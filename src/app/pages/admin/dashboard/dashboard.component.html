@@ -61,30 +61,32 @@
           <a routerLink="/admin/orders" class="btn btn-outline btn-sm">Ver Todas</a>
         </div>
         
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID Pedido</th>
-              <th>Cliente</th>
-              <th>Fecha</th>
-              <th>Monto</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let order of recentOrders()">
-              <td><strong>{{ order.id }}</strong></td>
-              <td>{{ order.cliente }}</td>
-              <td>{{ order.fecha }}</td>
-              <td class="price">S/ {{ order.total }}</td>
-              <td>
-                <span class="status-badge" [class]="order.estado.toLowerCase().replace(' ', '-')">
-                  {{ order.estado }}
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID Pedido</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Monto</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of recentOrders()">
+                <td><strong>{{ order.id }}</strong></td>
+                <td>{{ order.cliente }}</td>
+                <td>{{ order.fecha }}</td>
+                <td class="price">S/ {{ order.total }}</td>
+                <td>
+                  <span class="status-badge" [class]="order.estado.toLowerCase().replace(' ', '-')">
+                    {{ order.estado }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Quick Shortcuts -->

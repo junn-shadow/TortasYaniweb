@@ -17,38 +17,40 @@
 
     <!-- Products List Table -->
     <div class="table-card card">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>Imagen</th>
-            <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Precio Base</th>
-            <th>Stock</th>
-            <th>Etiqueta</th>
-            <th class="text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let prod of productsService.products()">
-            <td>
-              <img [src]="prod.imagen" [alt]="prod.nombre" class="table-thumb" />
-            </td>
-            <td><strong>{{ prod.nombre }}</strong></td>
-            <td>{{ prod.categoria }}</td>
-            <td class="price">S/ {{ prod.precio }}</td>
-            <td>{{ prod.stock }} uds</td>
-            <td>
-              <span *ngIf="prod.badge" class="badge-label">{{ prod.badge }}</span>
-              <span *ngIf="!prod.badge" class="text-muted">-</span>
-            </td>
-            <td class="text-right actions-cell">
-              <button (click)="openEditModal(prod)" class="btn-action edit" title="Editar">Editar</button>
-              <button (click)="onDelete(prod.id)" class="btn-action delete" title="Eliminar">Eliminar</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Imagen</th>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Precio Base</th>
+              <th>Stock</th>
+              <th>Etiqueta</th>
+              <th class="text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let prod of productsService.products()">
+              <td>
+                <img [src]="prod.imagen" [alt]="prod.nombre" class="table-thumb" />
+              </td>
+              <td><strong>{{ prod.nombre }}</strong></td>
+              <td>{{ prod.categoria }}</td>
+              <td class="price">S/ {{ prod.precio }}</td>
+              <td>{{ prod.stock }} uds</td>
+              <td>
+                <span *ngIf="prod.badge" class="badge-label">{{ prod.badge }}</span>
+                <span *ngIf="!prod.badge" class="text-muted">-</span>
+              </td>
+              <td class="text-right actions-cell">
+                <button (click)="openEditModal(prod)" class="btn-action edit" title="Editar">Editar</button>
+                <button (click)="onDelete(prod.id)" class="btn-action delete" title="Eliminar">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
   </main>

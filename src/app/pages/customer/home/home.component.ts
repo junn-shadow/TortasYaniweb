@@ -44,7 +44,7 @@ export class HomeComponent {
   selectedProduct = signal<Product | null>(null);
 
   // Customization Form Fields
-  selectedSize = signal<string>('M');
+  selectedSize = signal<string>('Mediana');
   selectedPisos = signal<number>(1);
   selectedRelleno = signal<string>('Chocolate');
   selectedSabor = signal<string>('Vainilla');
@@ -88,7 +88,7 @@ export class HomeComponent {
     this.selectedProduct.set(product);
     
     // Reset Form to Defaults
-    this.selectedSize.set(product.tamanios[0] || 'M');
+    this.selectedSize.set(product.tamanios[1] || product.tamanios[0] || 'Mediana');
     this.selectedPisos.set(1);
     this.selectedRelleno.set(this.rellenosList[0]);
     this.selectedSabor.set(this.saboresList[0]);
@@ -132,11 +132,6 @@ export class HomeComponent {
   addToCart(): void {
     const product = this.selectedProduct();
     if (!product) return;
-
-    // Check size translation for display
-    const sizeName = this.selectedSize() === 'S' ? 'Pequeña' : 
-                     this.selectedSize() === 'M' ? 'Mediana' : 
-                     this.selectedSize() === 'L' ? 'Grande' : 'Familiar';
 
     const isCake = this.isCakeProduct(product);
 

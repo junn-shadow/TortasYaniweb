@@ -118,6 +118,17 @@
         </div>
       </div>
 
+      <!-- Privacy Terms Checkbox -->
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="terms" />
+          <span>Acepto las <a routerLink="/sobre-nosotros" class="link-action">Políticas de Privacidad y el tratamiento de mis datos</a>.</span>
+        </label>
+        <div *ngIf="registerForm.get('terms')?.touched && registerForm.get('terms')?.invalid" class="error-msg">
+          <span *ngIf="registerForm.get('terms')?.errors?.['required']">Debes aceptar las políticas para registrarte.</span>
+        </div>
+      </div>
+
       <!-- Submit -->
       <button type="submit" class="btn btn-primary w-100" [disabled]="isLoading">
         <span *ngIf="isLoading" class="spinner"></span>

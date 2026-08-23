@@ -143,12 +143,14 @@ export class CheckoutComponent implements AfterViewInit {
     const distance = this.getDistanceFromLatLonInKm(storeLat, storeLon, lat, lon);
     this.distanceInKm.set(parseFloat(distance.toFixed(2)));
 
-    let cost = 10;
-    if (distance > 1.5) {
-      cost += (distance - 1.5) * 2.5;
+    // Tarifa base S/ 5.00 (hasta 3km). +S/ 1.50 por km extra.
+    let cost = 5.00;
+    if (distance > 3) {
+      cost += (distance - 3) * 1.50;
     }
-    cost = Math.round(cost);
-    cost = Math.min(20, Math.max(10, cost));
+    
+    // Round to 2 decimal places
+    cost = Math.round(cost * 100) / 100;
     this.deliveryCost.set(cost);
   }
 
@@ -274,7 +276,10 @@ export class CheckoutComponent implements AfterViewInit {
         cantidad: i.cantidad,
         precio: i.precio
       })),
-      total: this.grandTotal()
+      total: this.grandTotal(),
+      montoAdelanto: this.grandTotal() * 0.5,
+      saldoPendiente: this.grandTotal() * 0.5,
+      estadoPago: 'Pendiente'
     };
 
     const savedUserOrders = localStorage.getItem('user_orders');

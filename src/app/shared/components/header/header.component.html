@@ -2,12 +2,16 @@
   <div class="header-container">
     <!-- Logo -->
     <a routerLink="/" class="logo">
+      <img src="https://res.cloudinary.com/ddfzttgyr/image/upload/v1787361411/logo_pwrxkp.png" alt="Logo" class="site-logo">
       <span class="logo-text">Tortas Yani</span>
     </a>
 
     <!-- Navigation Menu -->
     <nav class="nav-links">
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Catálogo</a>
+      <a routerLink="/sobre-nosotros" routerLinkActive="active">Sobre Nosotros</a>
+      <a routerLink="/ubicanos" routerLinkActive="active">Ubícanos</a>
+      <a routerLink="/contactanos" routerLinkActive="active">Contáctanos</a>
       <a routerLink="/chat" routerLinkActive="active">Yani AI (Asistente)</a>
       <a *ngIf="authService.isAdmin()" routerLink="/admin/dashboard" routerLinkActive="active" class="admin-badge-link">Panel Admin</a>
     </nav>

@@ -227,9 +227,20 @@
       </table>
     </div>
 
-    <div class="modal-footer mt-3">
+    <div class="modal-footer mt-3" style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
       <button (click)="closeDetails()" class="btn btn-outline">Cerrar</button>
-      <button (click)="exportExcelReport()" class="btn btn-excel">Descargar Excel de Ventas</button>
+      
+      <button *ngIf="!order.comprobanteEmitido" (click)="generateInvoice(order, 'Boleta')" class="btn btn-primary" title="Generar Boleta Electrónica">
+        📄 Emitir Boleta
+      </button>
+      <button *ngIf="!order.comprobanteEmitido" (click)="generateInvoice(order, 'Factura')" class="btn btn-primary" title="Generar Factura Electrónica">
+        🏢 Emitir Factura
+      </button>
+
+      <button (click)="sendWhatsAppReceipt(order)" class="btn btn-primary" style="background: #25D366; border-color: #25D366;">
+        Comprobante WhatsApp
+      </button>
+      <button (click)="exportExcelReport()" class="btn btn-excel">Descargar Excel</button>
     </div>
   </div>
 </div>

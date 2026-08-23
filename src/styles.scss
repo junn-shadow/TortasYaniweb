@@ -1,5 +1,5 @@
 /* ==========================================
-   🎨 DESIGN SYSTEM: TORTAS YANI
+    DESIGN SYSTEM: TORTAS YANI
    ========================================== */
 
 // 1. CSS VARIABLES (Theme Tokens)
@@ -8,13 +8,13 @@
   --font-secondary: 'Inter', sans-serif;
 
   // AppColors mapping
-  --bg-color: #FFFDF8;          // Crema Almendra / Ivory
-  --primary-color: #F07070;     // Coral / Salmon Pink
+  --bg-color: #FFFDF8; // Crema Almendra / Ivory
+  --primary-color: #F07070; // Coral / Salmon Pink
   --primary-hover: #e05c5c;
-  --primary-light: #FFE4EC;     // Melocotón Claro / Blush Pink
-  --secondary-color: #EFF1F7;   // Light Slate Grey
-  --text-color: #5A4A42;        // Chocolate / Dark Brown
-  --text-light: #8E7A70;        // Soft Brown
+  --primary-light: #FFE4EC; // Melocotón Claro / Blush Pink
+  --secondary-color: #EFF1F7; // Light Slate Grey
+  --text-color: #5A4A42; // Chocolate / Dark Brown
+  --text-light: #8E7A70; // Soft Brown
   --white: #FFFFFF;
   --grey: #9E9E9E;
   --grey-light: #E0E0E0;
@@ -45,6 +45,53 @@
   --radius-full: 9999px;
 }
 
+// 1.5 ADMIN THEME OVERRIDES (Professional & Corporate)
+.admin-layout {
+  // Overriding global variables specifically for the admin context
+  --font-primary: 'Inter', sans-serif;
+
+  --bg-color: #F4F6F9; // Clean system gray-white
+  --primary-color: #1E293B; // Slate Dark / Navy
+  --primary-hover: #334155;
+  --primary-light: #E2E8F0; // Light slate
+  --secondary-color: #CBD5E1; // Slate gray
+  --text-color: #0F172A; // Very dark slate
+  --text-light: #475569; // Muted slate
+
+  --accent-pink: #3B82F6; // System Blue
+  --accent-dark-pink: #1D4ED8; // Dark Blue
+
+  // Refined shadows for professional look
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  // Make cards less rounded for a corporate feel
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  // Apply the typography and background
+  font-family: var(--font-primary);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+
+  // Ensure tables and buttons inside admin use Inter and professional colors
+  .btn-primary {
+    background-color: var(--accent-pink); // Blue buttons for actions
+    color: var(--white);
+
+    &:hover {
+      background-color: var(--accent-dark-pink);
+    }
+  }
+
+  .pink-card {
+    background-color: var(--white) !important;
+    border-top: 4px solid var(--accent-pink);
+  }
+}
+
 // 2. RESET & BASE GLOBAL STYLES
 * {
   margin: 0;
@@ -55,7 +102,8 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   background-color: var(--bg-color);
   color: var(--text-color);
@@ -68,7 +116,12 @@ body {
   line-height: 1.5;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600;
   color: var(--text-color);
   line-height: 1.25;
@@ -78,13 +131,16 @@ a {
   color: var(--primary-color);
   text-decoration: none;
   transition: color var(--transition-fast);
-  
+
   &:hover {
     color: var(--primary-hover);
   }
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font-family: var(--font-primary);
   outline: none;
 }
@@ -241,12 +297,45 @@ button, input, select, textarea {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
+}
+
 .animate-fade-in {
   animation: fadeIn var(--transition-normal) forwards;
+}
+
+/* Custom Page Layouts (Sobre Nosotros, etc.) */
+.page-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  min-height: calc(100vh - 70px);
+}
+
+.page-section {
+  background: var(--white);
+  padding: 3rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  
+  h1 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
 }

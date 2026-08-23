@@ -20,6 +20,18 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/customer/home/home.component').then(m => m.HomeComponent)
       },
       {
+        path: 'sobre-nosotros',
+        loadComponent: () => import('./pages/customer/sobre-nosotros/sobre-nosotros.component').then(m => m.SobreNosotrosComponent)
+      },
+      {
+        path: 'contactanos',
+        loadComponent: () => import('./pages/customer/contactanos/contactanos.component').then(m => m.ContactanosComponent)
+      },
+      {
+        path: 'ubicanos',
+        loadComponent: () => import('./pages/customer/ubicanos/ubicanos.component').then(m => m.UbicanosComponent)
+      },
+      {
         path: 'chat',
         loadComponent: () => import('./pages/customer/chat/chat.component').then(m => m.ChatComponent)
       },

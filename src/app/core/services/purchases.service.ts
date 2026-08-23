@@ -35,16 +35,6 @@ export class PurchasesService {
       saldoPendiente: 370.00,
       estado: 'Pendiente',
       observaciones: 'Crédito a 15 días'
-    },
-    {
-      id: 'COM-903',
-      proveedor: 'Lácteos Gloria',
-      fecha: '2026-08-15',
-      insumosSummary: 'Mantequilla sin sal (15kg), Crema de Leche (10L)',
-      montoTotal: 520.00,
-      montoPagado: 520.00,
-      saldoPendiente: 0.00,
-      estado: 'Pagado'
     }
   ];
 

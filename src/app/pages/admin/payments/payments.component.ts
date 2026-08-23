@@ -92,10 +92,17 @@ export class PaymentsComponent {
   }
 
   approve(payId: string): void {
+    const payment = this.paymentsService.payments().find(p => p.id === payId);
     this.paymentsService.approvePayment(payId);
     if (this.selectedPayment()?.id === payId) {
       this.selectedPayment.set({ ...this.selectedPayment()!, estado: 'Aprobado' });
     }
+    
+    // Cambio de estado automático al confirmar pago de adelanto
+    if (payment && payment.tipo === 'Adelanto (50%)') {
+      this.ordersService.updateOrderStatus(payment.orderId, 'En Preparación');
+    }
+    
     this.showToast(`✅ Pago ${payId} Aprobado exitosamente`);
   }
 

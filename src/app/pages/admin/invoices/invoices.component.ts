@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InvoiceDoc } from '../../../core/models/models';
 import { ExcelExportService } from '../../../core/services/excel-export.service';
+import { InvoicesService } from '../../../core/services/invoices.service';
 import { AdminSidebarComponent } from '../../../shared/components/admin-sidebar/admin-sidebar.component';
 
 @Component({
@@ -20,64 +21,25 @@ export class InvoicesComponent {
   endDate = signal<string>('');
   toastMessage = signal<string | null>(null);
 
-  // Initial mock electronic invoices
-  invoices = signal<InvoiceDoc[]>([
-    {
-      numeroComprobante: 'B001-000452',
-      orderId: 'ORD-1082',
-      cliente: 'Carla Mendoza',
-      documentoCliente: '74829102',
-      tipo: 'Boleta',
-      fechaEmision: '2026-08-21 14:32',
-      montoTotal: 145.00,
-      estadoSunat: 'Aceptado'
-    },
-    {
-      numeroComprobante: 'F001-000120',
-      orderId: 'ORD-1083',
-      cliente: 'Inversiones Gómez S.A.C.',
-      documentoCliente: '20601293841',
-      tipo: 'Factura',
-      fechaEmision: '2026-08-21 13:10',
-      montoTotal: 88.00,
-      estadoSunat: 'Aceptado'
-    },
-    {
-      numeroComprobante: 'B001-000451',
-      orderId: 'ORD-1084',
-      cliente: 'Sofía Castro',
-      documentoCliente: '45892103',
-      tipo: 'Boleta',
-      fechaEmision: '2026-08-20 18:45',
-      montoTotal: 145.00,
-      estadoSunat: 'Aceptado'
-    },
-    {
-      numeroComprobante: 'NC01-000012',
-      orderId: 'ORD-1070',
-      cliente: 'Pedro Ramírez',
-      documentoCliente: '10293847',
-      tipo: 'Nota de Crédito',
-      fechaEmision: '2026-08-19 09:15',
-      montoTotal: 65.00,
-      estadoSunat: 'Anulado'
-    }
-  ]);
+  constructor(
+    private excelExportService: ExcelExportService,
+    public invoicesService: InvoicesService
+  ) {}
 
-  totalEmitted = computed(() => this.invoices().length);
+  totalEmitted = computed(() => this.invoicesService.invoices().length);
 
   totalInvoiced = computed(() => {
-    return this.invoices()
+    return this.invoicesService.invoices()
       .filter(i => i.estadoSunat === 'Aceptado')
       .reduce((acc, i) => acc + i.montoTotal, 0);
   });
 
   totalCanceled = computed(() => {
-    return this.invoices().filter(i => i.estadoSunat === 'Anulado').length;
+    return this.invoicesService.invoices().filter(i => i.estadoSunat === 'Anulado').length;
   });
 
   filteredInvoices = computed(() => {
-    let list = this.invoices();
+    let list = this.invoicesService.invoices();
     const search = this.searchTerm().toLowerCase().trim();
     const type = this.selectedType();
     const start = this.startDate();
@@ -106,10 +68,13 @@ export class InvoicesComponent {
     return list;
   });
 
-  constructor(private excelExportService: ExcelExportService) {}
-
   printTicket(inv: InvoiceDoc): void {
-    this.showToast(`🖨️ Generando Ticket de Impresión para ${inv.numeroComprobante}...`);
+    if (inv.pdfUrl) {
+      window.open(inv.pdfUrl, '_blank');
+      this.showToast(`🖨️ Abriendo comprobante ${inv.numeroComprobante}...`);
+    } else {
+      this.showToast(`🖨️ Generando Ticket de Impresión para ${inv.numeroComprobante}...`);
+    }
   }
 
   sendWhatsApp(inv: InvoiceDoc): void {

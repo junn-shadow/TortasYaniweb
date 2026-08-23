@@ -58,8 +58,7 @@ export class UsersService {
             // Seed mock users
             const defaultUsers: User[] = [
               { id: '1', nombre: 'Yani Admin', email: 'admin@gmail.com', rol: 'admin', activo: true },
-              { id: '2', nombre: 'Carla Mendoza', email: 'carla@gmail.com', rol: 'client', activo: true },
-              { id: '3', nombre: 'Roberto Gómez', email: 'roberto@gmail.com', rol: 'client', activo: true }
+              { id: '2', nombre: 'Carla Mendoza', email: 'carla@gmail.com', rol: 'client', activo: true }
             ];
             this.users.set(defaultUsers);
             localStorage.setItem('admin_users', JSON.stringify(defaultUsers));

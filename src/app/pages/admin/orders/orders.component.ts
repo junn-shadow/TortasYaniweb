@@ -6,6 +6,7 @@ import { Order } from '../../../core/models/models';
 import { OrdersService } from '../../../core/services/orders.service';
 import { ExcelExportService } from '../../../core/services/excel-export.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { InvoicesService } from '../../../core/services/invoices.service';
 import { AdminSidebarComponent } from '../../../shared/components/admin-sidebar/admin-sidebar.component';
 
 @Component({
@@ -77,7 +78,8 @@ export class OrdersComponent {
   constructor(
     public ordersService: OrdersService,
     private excelExportService: ExcelExportService,
-    public authService: AuthService
+    public authService: AuthService,
+    private invoicesService: InvoicesService
   ) {}
 
   openDetails(order: Order): void {
@@ -107,6 +109,23 @@ export class OrdersComponent {
     this.showToast('📊 Reporte de Ventas Excel generado correctamente');
   }
 
+  sendWhatsAppReceipt(order: Order): void {
+    const number = order.telefono.replace(/\D/g, '');
+    const isDelivery = order.direccion && order.direccion.toLowerCase() !== 'recojo en local';
+    let text = `Hola ${order.cliente},\n\nTe enviamos el comprobante de tu pedido *${order.id}* en Tortas Yani.\n\n`;
+    text += `*Total:* S/ ${order.total.toFixed(2)}\n`;
+    text += `*Adelanto Pagado:* S/ ${(order.montoAdelanto || order.total / 2).toFixed(2)}\n`;
+    text += `*Saldo Pendiente:* S/ ${(order.saldoPendiente || 0).toFixed(2)}\n\n`;
+    if (isDelivery) {
+      text += `*Dirección de Entrega:* ${order.direccion}\n\n`;
+    }
+    text += `¡Gracias por tu compra!`;
+
+    const encodedText = encodeURIComponent(text);
+    const url = `https://wa.me/51${number}?text=${encodedText}`;
+    window.open(url, '_blank');
+  }
+
   deleteOrder(orderId: string): void {
     if (confirm(`¿Estás seguro de eliminar permanentemente la orden ${orderId}?`)) {
       this.ordersService.deleteOrder(orderId);
@@ -124,5 +143,30 @@ export class OrdersComponent {
 
   onLogout(): void {
     this.authService.logout();
+  }
+
+  generateInvoice(order: Order, type: 'Boleta' | 'Factura'): void {
+    if (order.comprobanteEmitido) {
+      this.showToast(`⚠️ La orden ${order.id} ya tiene un comprobante emitido.`);
+      return;
+    }
+
+    this.invoicesService.createInvoice({
+      orderId: order.id,
+      cliente: order.cliente,
+      documentoCliente: order.dniCliente || '00000000',
+      tipo: type,
+      fechaEmision: new Date().toISOString().split('T')[0], // yyyy-mm-dd
+      montoTotal: order.total,
+      estadoSunat: 'Aceptado',
+      pdfUrl: 'https://res.cloudinary.com/demo/image/upload/sample.pdf' // Placeholder for PDF url
+    }).subscribe(inv => {
+      if (inv) {
+        this.showToast(`✅ ${type} ${inv.numeroComprobante} generada exitosamente y guardada en BD.`);
+        // Mark order as emitted
+        this.ordersService.updateOrderStatus(order.id, order.estado); // Just a dummy update to refresh if needed, ideally a new field
+        order.comprobanteEmitido = true;
+      }
+    });
   }
 }

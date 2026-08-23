@@ -24,6 +24,12 @@
   align-items: center;
   gap: 0.5rem;
 
+  .site-logo {
+    height: 35px;
+    width: auto;
+    object-fit: contain;
+  }
+
   .logo-icon {
     font-size: 1.8rem;
   }

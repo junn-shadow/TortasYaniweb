@@ -57,45 +57,6 @@ export class OrdersService {
       productosSummary: 'Torta de Zanahoria & Nueces (L)',
       total: 88.0,
       comprobanteEmitido: false
-    },
-    {
-      id: 'ORD-1084',
-      fecha: '2026-08-20 18:45',
-      cliente: 'Sofía Castro',
-      dniCliente: '45892103',
-      telefono: '915-234-567',
-      direccion: 'Jirón Huallaga 120, Centro de Lima',
-      estado: 'Pagado',
-      estadoPago: 'Aprobado',
-      metodoPago: 'Tarjeta',
-      montoAdelanto: 145.0,
-      saldoPendiente: 0.0,
-      items: [
-        { nombre: 'Red Velvet Especial (M)', cantidad: 1, precio: 90.0 },
-        { nombre: 'Pie de Limón (M)', cantidad: 1, precio: 55.0 }
-      ],
-      productosSummary: 'Red Velvet Especial (M), Pie de Limón (M)',
-      total: 145.0,
-      comprobanteEmitido: true
-    },
-    {
-      id: 'ORD-1085',
-      fecha: '2026-08-19 11:20',
-      cliente: 'Daniela Rivas',
-      dniCliente: '20938475',
-      telefono: '956-789-012',
-      direccion: 'Av. Primavera 1030, Surco',
-      estado: 'Entregado',
-      estadoPago: 'Aprobado',
-      metodoPago: 'Efectivo',
-      montoAdelanto: 95.0,
-      saldoPendiente: 0.0,
-      items: [
-        { nombre: 'Tres Leches de Vainilla (L)', cantidad: 2, precio: 95.0 }
-      ],
-      productosSummary: 'Tres Leches de Vainilla (L) x2',
-      total: 190.0,
-      comprobanteEmitido: true
     }
   ];
 

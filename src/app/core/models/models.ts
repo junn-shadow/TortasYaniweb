@@ -104,6 +104,7 @@ export interface InvoiceDoc {
   fechaEmision: string;
   montoTotal: number;
   estadoSunat: 'Aceptado' | 'Pendiente' | 'Anulado';
+  pdfUrl?: string; // Link to the stored PDF in Cloudinary/S3
 }
 
 export interface ChatMessage {

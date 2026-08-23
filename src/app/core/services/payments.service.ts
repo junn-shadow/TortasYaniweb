@@ -36,26 +36,6 @@ export class PaymentsService {
       estado: 'Aprobado',
       fecha: '2026-08-21 13:10',
       voucherUrl: 'https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234891/Torta_Matrimonial_qhxegx.png'
-    },
-    {
-      id: 'PAY-8803',
-      orderId: 'ORD-1084',
-      cliente: 'Sofía Castro',
-      monto: 145.00,
-      metodo: 'Tarjeta',
-      tipo: 'Pago Total',
-      estado: 'Aprobado',
-      fecha: '2026-08-20 18:45'
-    },
-    {
-      id: 'PAY-8804',
-      orderId: 'ORD-1085',
-      cliente: 'Daniela Rivas',
-      monto: 95.00,
-      metodo: 'Efectivo',
-      tipo: 'Saldo Final (50%)',
-      estado: 'Aprobado',
-      fecha: '2026-08-19 11:20'
     }
   ];
 

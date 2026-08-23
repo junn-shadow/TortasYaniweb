@@ -1,7 +1,58 @@
 <app-header></app-header>
-<main class="page-layout">
-  <section class="page-section">
-    <h1>Sobre Nosotros</h1>
-    <p>Conoce la historia detrás de Tortas Yani, nuestra misión y visión de llevar los mejores postres a tu mesa.</p>
+<main class="about-page">
+  <!-- Hero Section -->
+  <section class="about-hero animate-fade-in">
+    <div class="hero-content">
+      <span class="badge">Nuestra Historia</span>
+      <h1>Pasión por el detalle, amor en cada porción</h1>
+      <p>Desde nuestros inicios, en Tortas Yani nos hemos dedicado a crear momentos inolvidables a través de la repostería artesanal de la más alta calidad.</p>
+    </div>
+    <div class="hero-image">
+      <img src="https://images.unsplash.com/photo-1621303837174-89787a7d4729?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Pastelería Artesanal" class="main-img">
+      <div class="floating-badge">
+        <span class="emoji">🍰</span>
+        <div class="text">
+          <strong>+10 Años</strong>
+          <span>Endulzando vidas</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values Section -->
+  <section class="values-section animate-fade-in">
+    <div class="section-header text-center">
+      <h2>Nuestra Esencia</h2>
+      <p>Los pilares que sostienen cada una de nuestras creaciones.</p>
+    </div>
+    
+    <div class="values-grid">
+      <div class="value-card card">
+        <div class="icon-wrapper"><i class="fas fa-heart"></i></div>
+        <h3>Artesanal</h3>
+        <p>Todo es preparado a mano, con técnicas tradicionales que aseguran el sabor de casa en cada bocado.</p>
+      </div>
+      
+      <div class="value-card card">
+        <div class="icon-wrapper"><i class="fas fa-star"></i></div>
+        <h3>Calidad Premium</h3>
+        <p>Seleccionamos meticulosamente nuestros ingredientes, garantizando frescura y un sabor insuperable.</p>
+      </div>
+      
+      <div class="value-card card">
+        <div class="icon-wrapper"><i class="fas fa-users"></i></div>
+        <h3>Cercanía</h3>
+        <p>No hacemos solo postres, creamos conexiones. Queremos ser parte de tus celebraciones más íntimas.</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- CTA Section -->
+  <section class="cta-section animate-fade-in">
+    <div class="cta-card">
+      <h2>¿Listo para probar la diferencia?</h2>
+      <p>Explora nuestro catálogo y déjate sorprender por nuestra variedad de sabores.</p>
+      <a routerLink="/" class="btn btn-primary">Ver Catálogo de Tortas</a>
+    </div>
   </section>
 </main>

@@ -1,7 +1,76 @@
 <app-header></app-header>
-<main class="page-layout">
-  <section class="page-section">
-    <h1>Contáctanos</h1>
-    <p>¿Tienes alguna duda o pedido especial? Escríbenos y con gusto te atenderemos.</p>
-  </section>
+<main class="contact-page">
+  <div class="contact-hero animate-fade-in">
+    <h1>Estamos aquí para endulzar tu día</h1>
+    <p>¿Tienes un pedido especial, un evento corporativo o simplemente quieres saludar? ¡Hablemos!</p>
+  </div>
+
+  <div class="contact-container animate-fade-in">
+    <!-- Contact Info Cards -->
+    <div class="contact-info-grid">
+      <a href="https://wa.me/51919576034?text=Hola%20Tortas%20Yani,%20quisiera%20hacer%20un%20pedido..." target="_blank" class="info-card whatsapp-card">
+        <div class="icon-circle">
+          <i class="fab fa-whatsapp"></i>
+        </div>
+        <h3>WhatsApp Directo</h3>
+        <p>+51 919 576 034</p>
+        <span class="action-text">Escríbenos ahora &rarr;</span>
+      </a>
+
+      <a href="mailto:pedidos@tortasyani.com" class="info-card email-card">
+        <div class="icon-circle">
+          <i class="fas fa-envelope"></i>
+        </div>
+        <h3>Correo Electrónico</h3>
+        <p>pedidos&#64;tortasyani.com</p>
+        <span class="action-text">Envíanos un mail &rarr;</span>
+      </a>
+
+      <div class="info-card hours-card">
+        <div class="icon-circle">
+          <i class="fas fa-clock"></i>
+        </div>
+        <h3>Horario de Atención</h3>
+        <p>Lunes a Sábado: 8:00 AM - 8:00 PM</p>
+        <p>Domingos: 9:00 AM - 2:00 PM</p>
+      </div>
+    </div>
+
+    <!-- Contact Form Section -->
+    <div class="contact-form-wrapper card">
+      <div class="form-header">
+        <h2>Envíanos un mensaje</h2>
+        <p>Completa el formulario y te responderemos en breve.</p>
+      </div>
+      
+      <form class="contact-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre Completo</label>
+            <input type="text" class="form-control" placeholder="Ej. Juan Pérez">
+          </div>
+          <div class="form-group">
+            <label>Correo Electrónico</label>
+            <input type="email" class="form-control" placeholder="juan@correo.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Asunto</label>
+          <select class="form-control">
+            <option>Cotización para Evento</option>
+            <option>Pedido Personalizado</option>
+            <option>Duda o Consulta</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Mensaje</label>
+          <textarea class="form-control" rows="5" placeholder="Escribe tu mensaje aquí..."></textarea>
+        </div>
+        <button type="button" class="btn btn-primary btn-submit">
+          Enviar Mensaje
+        </button>
+      </form>
+    </div>
+  </div>
 </main>

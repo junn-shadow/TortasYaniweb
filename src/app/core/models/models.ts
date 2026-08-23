@@ -103,7 +103,7 @@ export interface InvoiceDoc {
   tipo: 'Boleta' | 'Factura' | 'Ticket' | 'Nota de Crédito';
   fechaEmision: string;
   montoTotal: number;
-  estadoSunat: 'Aceptado' | 'Pendiente' | 'Anulado';
+  estadoSunat: 'Aceptado' | 'Pendiente' | 'Anulado' | 'Rechazado';
   pdfUrl?: string; // Link to the stored PDF in Cloudinary/S3
 }
 

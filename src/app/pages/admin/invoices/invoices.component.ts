@@ -93,6 +93,29 @@ export class InvoicesComponent {
     this.showToast('📊 Reporte Excel de Comprobantes SUNAT generado');
   }
 
+  emitirBoletaDemo(): void {
+    const dni = prompt('Ingrese DNI del cliente:', '77777777') || '77777777';
+    const nombre = prompt('Ingrese Nombre del cliente:', 'CLIENTE PRUEBA SUNAT') || 'CLIENTE PRUEBA SUNAT';
+    const total = parseFloat(prompt('Monto Total S/:', '50.00') || '50.00');
+
+    this.showToast('🚀 Enviando comprobante a NubeFact/SUNAT...');
+
+    this.invoicesService.emitirBoletaNubeFact({
+      dniCliente: dni,
+      nombreCliente: nombre,
+      totalVenta: total,
+      descripcionProducto: 'Torta Especial Yani (Demo NubeFact)'
+    }).subscribe(res => {
+      if (res && res.enlace_del_pdf) {
+        this.showToast(`✅ ¡Boleta ${res.serie}-${res.numero} emitida exitosamente en NubeFact!`);
+      } else if (res && res.errors) {
+        this.showToast(`❌ Error de NubeFact: ${res.errors}`);
+      } else {
+        this.showToast('ℹ️ Petición enviada. Revisa la tabla de comprobantes.');
+      }
+    });
+  }
+
   showToast(msg: string): void {
     this.toastMessage.set(msg);
     setTimeout(() => this.toastMessage.set(null), 3500);

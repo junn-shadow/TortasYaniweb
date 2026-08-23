@@ -87,6 +87,39 @@ export class InvoicesService {
     ).subscribe();
   }
 
+  public emitirBoletaNubeFact(reqData: { dniCliente: string; nombreCliente: string; direccionCliente?: string; totalVenta: number; descripcionProducto?: string }): Observable<any> {
+    const apiUrl = 'https://tortasyaniapiweb-production.up.railway.app/api/facturacion/emitir-boleta';
+    return this.http.post<any>(apiUrl, {
+      dniCliente: reqData.dniCliente || '00000000',
+      nombreCliente: reqData.nombreCliente || 'CLIENTE GENERAL',
+      direccionCliente: reqData.direccionCliente || 'LIMA PERU',
+      totalVenta: reqData.totalVenta,
+      descripcionProducto: reqData.descripcionProducto || 'Pedido Tortas Yani'
+    }).pipe(
+      tap(res => {
+        if (res && res.serie) {
+          const newDoc: InvoiceDoc = {
+            numeroComprobante: `${res.serie}-${res.numero}`,
+            orderId: `ORD-${Math.floor(Math.random() * 9000) + 1000}`,
+            cliente: reqData.nombreCliente,
+            documentoCliente: reqData.dniCliente,
+            tipo: 'Boleta',
+            fechaEmision: new Date().toISOString().replace('T', ' ').substring(0, 16),
+            montoTotal: reqData.totalVenta,
+            estadoSunat: res.errors ? 'Rechazado' : 'Aceptado',
+            pdfUrl: res.enlace_del_pdf || ''
+          };
+          this.invoices.set([newDoc, ...this.invoices()]);
+          this.saveToStorage();
+        }
+      }),
+      catchError(err => {
+        console.error('Error emitiendo boleta NubeFact via API', err);
+        return of(null);
+      })
+    );
+  }
+
   public createInvoice(invoiceData: Omit<InvoiceDoc, 'numeroComprobante'>): Observable<InvoiceDoc | null> {
     const isFactura = invoiceData.tipo === 'Factura';
     const prefix = isFactura ? 'F001' : 'B001';

@@ -30,10 +30,21 @@
       margin-bottom: 1.5rem;
     }
     
-    p {
+    .intro-text {
       font-size: 1.15rem;
       color: var(--text-light);
       line-height: 1.6;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+    
+    .detailed-text {
+      p {
+        font-size: 1rem;
+        color: var(--text-light);
+        line-height: 1.7;
+        margin-bottom: 1rem;
+      }
     }
   }
   
@@ -77,6 +88,46 @@
         span {
           font-size: 0.85rem;
           color: var(--text-light);
+        }
+      }
+    }
+  }
+}
+
+.philosophy-section {
+  background-color: var(--white);
+  padding: 4rem 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 5rem;
+  border: 1px solid rgba(240, 112, 112, 0.05);
+
+  .philosophy-content {
+    h2 {
+      text-align: center;
+      font-size: 2.2rem;
+      color: var(--primary-color);
+      margin-bottom: 3rem;
+    }
+
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+
+      .philo-card {
+        h3 {
+          font-size: 1.5rem;
+          color: var(--text-color);
+          margin-bottom: 1rem;
+          padding-bottom: 0.5rem;
+          border-bottom: 2px solid var(--primary-light);
+        }
+        
+        p {
+          font-size: 1.05rem;
+          color: var(--text-light);
+          line-height: 1.7;
         }
       }
     }
@@ -182,6 +233,12 @@
   
   .values-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
   }
 }
 

@@ -54,17 +54,26 @@ export class ChatComponent implements AfterViewChecked {
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
 
-    // 3. Convert markdown bold **text** to <strong>text</strong>
-    cleanText = cleanText.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    // 3. Remove markdown bold **text** without bolding it
+    cleanText = cleanText.replace(/\*\*([^*]+)\*\*/g, '$1');
 
     // 4. Convert newlines to HTML line breaks
     cleanText = cleanText.replace(/\n/g, '<br>');
 
+    // 5. Replace 'Bienvenido/aa' or similar typo if any
+    cleanText = cleanText.replace(/Bienvenido\/aa/gi, 'Bienvenido/a');
+
     return this.sanitizer.bypassSecurityTrustHtml(cleanText);
   }
 
+  private lastMessagesLength = 0;
+
   ngAfterViewChecked() {
-    this.scrollToBottom();
+    const currentLength = this.chatService.messages().length;
+    if (currentLength !== this.lastMessagesLength) {
+      this.lastMessagesLength = currentLength;
+      this.scrollToBottom();
+    }
   }
 
   private scrollToBottom(): void {

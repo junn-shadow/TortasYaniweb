@@ -2,6 +2,7 @@ import { Component, signal, ViewChild, ElementRef, AfterViewChecked } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { ChatService } from '../../../core/services/chat.service';
 import { CartService } from '../../../core/services/cart.service';
@@ -36,8 +37,31 @@ export class ChatComponent implements AfterViewChecked {
   constructor(
     public chatService: ChatService,
     private cartService: CartService,
-    private productsService: ProductsService
+    private productsService: ProductsService,
+    private sanitizer: DomSanitizer
   ) {}
+
+  formatMessageContent(content: string): SafeHtml {
+    // 1. Remove the [ADD_CART:...] magic command
+    const addCartRegex = /\[ADD_CART:[^\]]+\]/g;
+    let cleanText = content.replace(addCartRegex, '').trim();
+
+    // 2. Escape HTML characters to protect against XSS
+    cleanText = cleanText
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+
+    // 3. Convert markdown bold **text** to <strong>text</strong>
+    cleanText = cleanText.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+    // 4. Convert newlines to HTML line breaks
+    cleanText = cleanText.replace(/\n/g, '<br>');
+
+    return this.sanitizer.bypassSecurityTrustHtml(cleanText);
+  }
 
   ngAfterViewChecked() {
     this.scrollToBottom();

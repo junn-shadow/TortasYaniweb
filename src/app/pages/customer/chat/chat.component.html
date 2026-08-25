@@ -25,8 +25,8 @@
         [class.assistant]="msg.role === 'assistant'"
       >
         <div class="message-bubble animate-fade-in">
-          <!-- Render message content -->
-          <p>{{ msg.content.replace('[ADD_CART:', '').split(']')[msg.content.includes('[ADD_CART:') ? 1 : 0] }}</p>
+          <!-- Render message content with bold markdown support -->
+          <p [innerHTML]="formatMessageContent(msg.content)"></p>
         </div>
       </div>
 

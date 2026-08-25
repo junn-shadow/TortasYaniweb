@@ -99,7 +99,7 @@ Tras confirmarlo, di: "Excelente, ya armé tu pedido. Por favor selecciona el í
     const apiUrl = 'https://tortasyaniapiweb-production.up.railway.app/api/chat';
 
     const body = {
-      model: 'llama-3.3-70b-versatile',
+      model: 'llama-3.1-8b-instant',
       messages: this.rawHistory,
       temperature: 0.7,
       max_tokens: 500

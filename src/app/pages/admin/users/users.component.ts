@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -14,7 +14,11 @@ import { AdminSidebarComponent } from '../../../shared/components/admin-sidebar/
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
-export class UsersComponent {
+export class UsersComponent implements OnInit {
+
+  ngOnInit(): void {
+    this.usersService.loadUsers();
+  }
 
   showFormModal = signal<boolean>(false);
   isEditing = signal<boolean>(false);

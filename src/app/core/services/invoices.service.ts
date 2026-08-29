@@ -76,6 +76,9 @@ export class InvoicesService {
         if (remote && remote.length > 0) {
           this.invoices.set(remote);
           this.saveToStorage();
+        } else {
+          this.invoices.set(this.initialInvoices);
+          this.saveToStorage();
         }
         this.isLoading.set(false);
       }),
@@ -88,14 +91,14 @@ export class InvoicesService {
   }
 
   public emitirBoletaNubeFact(reqData: { dniCliente: string; nombreCliente: string; direccionCliente?: string; totalVenta: number; descripcionProducto?: string }): Observable<any> {
-    const apiUrl = 'https://tortasyaniapiweb-production.up.railway.app/api/facturacion/emitir-boleta';
+    const apiUrl = 'https://tortasyaniapiweb-production.up.railway.app/api/Facturacion/emitir-boleta';
     return this.http.post<any>(apiUrl, {
       dniCliente: reqData.dniCliente || '00000000',
       nombreCliente: reqData.nombreCliente || 'CLIENTE GENERAL',
       direccionCliente: reqData.direccionCliente || 'LIMA PERU',
       totalVenta: reqData.totalVenta,
       descripcionProducto: reqData.descripcionProducto || 'Pedido Tortas Yani'
-    }).pipe(
+    }, { headers: this.getAuthHeaders() }).pipe(
       tap(res => {
         const serie = res?.serie || 'BBB1';
         const numero = res?.numero || Math.floor(Math.random() * 900) + 100;

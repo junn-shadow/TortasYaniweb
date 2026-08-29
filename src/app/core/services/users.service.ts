@@ -38,31 +38,62 @@ export class UsersService {
         }));
       }),
       tap(mappedUsers => {
-        this.users.set(mappedUsers);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('admin_users', JSON.stringify(mappedUsers));
+        if (mappedUsers && mappedUsers.length > 0) {
+          this.users.set(mappedUsers);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('admin_users', JSON.stringify(mappedUsers));
+          }
+        } else {
+          const defaultUsers: User[] = [
+            { id: '1', nombre: 'Yani Admin', email: 'admin@gmail.com', rol: 'admin', activo: true },
+            { id: '2', nombre: 'Carla Mendoza', email: 'carla@gmail.com', rol: 'client', activo: true }
+          ];
+          this.users.set(defaultUsers);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('admin_users', JSON.stringify(defaultUsers));
+          }
         }
         this.isLoading.set(false);
       }),
       catchError(err => {
         console.warn('=== USERS API OFFLINE, USING LOCALSTORAGE FALLBACK ===', err);
         if (typeof window !== 'undefined') {
+          let currentList: User[] = [];
           const savedUsers = localStorage.getItem('admin_users');
           if (savedUsers) {
             try {
-              this.users.set(JSON.parse(savedUsers));
-            } catch (e) {
-              this.users.set([]);
-            }
-          } else {
-            // Seed mock users
-            const defaultUsers: User[] = [
-              { id: '1', nombre: 'Yani Admin', email: 'admin@gmail.com', rol: 'admin', activo: true },
-              { id: '2', nombre: 'Carla Mendoza', email: 'carla@gmail.com', rol: 'client', activo: true }
-            ];
-            this.users.set(defaultUsers);
-            localStorage.setItem('admin_users', JSON.stringify(defaultUsers));
+              currentList = JSON.parse(savedUsers);
+            } catch (e) {}
           }
+          
+          const defaultUsers: User[] = [
+            { id: '1', nombre: 'Yani Admin', email: 'admin@gmail.com', rol: 'admin', activo: true },
+            { id: '2', nombre: 'Carla Mendoza', email: 'carla@gmail.com', rol: 'client', activo: true },
+            { id: '3', nombre: 'Roberto Gómez', email: 'roberto@gmail.com', rol: 'client', activo: true },
+            { id: '4', nombre: 'Yani Admin Alt', email: 'admin@tortasyani.com', rol: 'admin', activo: true }
+          ];
+
+          for (const du of defaultUsers) {
+            if (!currentList.find(u => u.email === du.email)) {
+              currentList.push(du);
+            }
+          }
+          
+          const registeredLocal = JSON.parse(localStorage.getItem('registered_users') || '[]');
+          for (const ru of registeredLocal) {
+            if (!currentList.find(u => u.email === ru.email)) {
+              currentList.push({
+                id: 'reg-' + Math.random().toString(36).substr(2, 9),
+                nombre: ru.nombreCompleto || ru.email,
+                email: ru.email,
+                rol: ru.rol || 'client',
+                activo: true
+              });
+            }
+          }
+
+          this.users.set(currentList);
+          localStorage.setItem('admin_users', JSON.stringify(currentList));
         }
         this.isLoading.set(false);
         return of([]);

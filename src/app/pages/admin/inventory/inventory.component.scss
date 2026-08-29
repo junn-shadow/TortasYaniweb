@@ -403,12 +403,13 @@
 
     .btn-action {
       border: 1px solid #CBD5E1;
-      width: 28px;
+      min-width: 28px;
+      padding: 0 0.50rem;
       height: 28px;
       border-radius: 6px;
       font-size: 0.8rem;
       font-weight: 700;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;

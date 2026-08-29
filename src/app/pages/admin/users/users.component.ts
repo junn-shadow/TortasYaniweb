@@ -1,7 +1,6 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { User } from '../../../core/models/models';
 import { AuthService } from '../../../core/services/auth.service';
 import { UsersService } from '../../../core/services/users.service';
@@ -10,7 +9,7 @@ import { AdminSidebarComponent } from '../../../shared/components/admin-sidebar/
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, AdminSidebarComponent],
+  imports: [CommonModule, ReactiveFormsModule, AdminSidebarComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })

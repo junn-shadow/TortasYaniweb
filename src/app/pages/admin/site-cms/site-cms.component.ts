@@ -1,7 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { SiteConfigService, SiteConfig } from '../../../core/services/site-config.service';
 import { CloudinaryService } from '../../../core/services/cloudinary.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -10,7 +9,7 @@ import { AdminSidebarComponent } from '../../../shared/components/admin-sidebar/
 @Component({
   selector: 'app-site-cms',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, AdminSidebarComponent],
+  imports: [CommonModule, ReactiveFormsModule, AdminSidebarComponent],
   templateUrl: './site-cms.component.html',
   styleUrl: './site-cms.component.scss'
 })

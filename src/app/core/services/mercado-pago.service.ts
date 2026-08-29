@@ -73,4 +73,21 @@ export class MercadoPagoService {
       })
     );
   }
+
+  /**
+   * Procesa el pago tokenizado desde Payment Bricks llamando a /v1/payments
+   */
+  processPayment(formData: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.accessToken}`
+    });
+
+    return this.http.post<any>('https://api.mercadopago.com/v1/payments', formData, { headers }).pipe(
+      catchError(err => {
+        console.error('Error procesando el pago en Mercado Pago:', err);
+        return of({ status: 'rejected', status_detail: 'cc_rejected_other_reason' });
+      })
+    );
+  }
 }

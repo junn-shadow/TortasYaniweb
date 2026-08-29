@@ -1,18 +1,18 @@
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { Order } from '../../../core/models/models';
 import { OrdersService } from '../../../core/services/orders.service';
 import { ExcelExportService } from '../../../core/services/excel-export.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { InvoicesService } from '../../../core/services/invoices.service';
+import { NubefactService } from '../../../core/services/nubefact.service';
 import { AdminSidebarComponent } from '../../../shared/components/admin-sidebar/admin-sidebar.component';
 
 @Component({
   selector: 'app-admin-orders',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, AdminSidebarComponent],
+  imports: [CommonModule, FormsModule, AdminSidebarComponent],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.scss'
 })
@@ -79,7 +79,8 @@ export class OrdersComponent {
     public ordersService: OrdersService,
     private excelExportService: ExcelExportService,
     public authService: AuthService,
-    private invoicesService: InvoicesService
+    private invoicesService: InvoicesService,
+    private nubefactService: NubefactService
   ) {}
 
   openDetails(order: Order): void {
@@ -151,21 +152,53 @@ export class OrdersComponent {
       return;
     }
 
-    this.invoicesService.createInvoice({
-      orderId: order.id,
-      cliente: order.cliente,
-      documentoCliente: order.dniCliente || '00000000',
-      tipo: type,
-      fechaEmision: new Date().toISOString().split('T')[0], // yyyy-mm-dd
-      montoTotal: order.total,
-      estadoSunat: 'Aceptado',
-      pdfUrl: 'https://res.cloudinary.com/demo/image/upload/sample.pdf' // Placeholder for PDF url
-    }).subscribe(inv => {
-      if (inv) {
-        this.showToast(`✅ ${type} ${inv.numeroComprobante} generada exitosamente y guardada en BD.`);
-        // Mark order as emitted
-        this.ordersService.updateOrderStatus(order.id, order.estado); // Just a dummy update to refresh if needed, ideally a new field
-        order.comprobanteEmitido = true;
+    this.showToast(`⌛ Conectando con Nubefact para emitir ${type}...`);
+
+    // Map the products for Nubefact
+    const productos = order.items.map((item, index) => ({
+      id: String(index + 1),
+      nombre: item.nombre || 'Torta',
+      cantidad: item.cantidad || 1,
+      precio_unitario: item.precio || 0
+    }));
+
+    this.nubefactService.generarBoleta(
+      order.dniCliente || '00000000',
+      order.cliente || 'Cliente Varios',
+      order.direccion || '-',
+      order.total,
+      productos
+    ).subscribe({
+      next: (response) => {
+        if (response && response.enlace_del_pdf) {
+          this.showToast(`✅ ${type} generada en Nubefact exitosamente.`);
+          window.open(response.enlace_del_pdf, '_blank');
+          
+          // Guardar registro simulado en base de datos
+          this.invoicesService.createInvoice({
+            orderId: order.id,
+            cliente: order.cliente,
+            documentoCliente: order.dniCliente || '00000000',
+            tipo: type,
+            fechaEmision: new Date().toISOString().split('T')[0],
+            montoTotal: order.total,
+            estadoSunat: 'Aceptado',
+            pdfUrl: response.enlace_del_pdf
+          }).subscribe(() => {
+            order.comprobanteEmitido = true;
+          });
+        } else if (response && response.errors) {
+          const errorMessage = typeof response.errors === 'string' ? response.errors : JSON.stringify(response.errors);
+          this.showToast(`❌ Error de Nubefact`);
+          alert(`NUBEFACT RECHAZÓ EL COMPROBANTE:\n\nMotivo:\n${errorMessage}\n\nRevisa los datos del cliente o tus credenciales en el código.`);
+        }
+      },
+      error: (err) => {
+        console.error("Error connecting to Nubefact:", err);
+        const errMsg = err.error?.errors || err.message;
+        const msg = typeof errMsg === 'string' ? errMsg : JSON.stringify(errMsg);
+        this.showToast(`❌ Error al conectar con Nubefact.`);
+        alert(`ERROR DE CONEXIÓN O TOKEN INVÁLIDO:\n\nDetalle:\n${msg}\n\nPor favor verifica que hayas pegado tu TOKEN correctamente en nubefact.service.ts`);
       }
     });
   }

@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, of, map, tap } from 'rxjs';
+import { Observable, catchError, of, map, tap, timeout } from 'rxjs';
 import { Product } from '../models/models';
 import { AuthService } from './auth.service';
 
@@ -21,28 +21,140 @@ export class ProductsService {
       nombre: 'Torta de Chocolate',
       categoria: 'Tortas Especiales',
       precio: 85.0,
-      stock: 10,
+      stock: 12,
       imagen: 'https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234559/torta_de_chocolate_wv8mi7.png',
       rating: 4.9,
       resenas: 124,
       badge: 'Popular',
       descripcion: 'Deliciosa torta de chocolate con capas de bizcocho húmedo y ganache.',
       ingredientes: ['Chocolate', 'Harina', 'Huevos', 'Mantequilla', 'Azúcar'],
-      tamanios: ['Pequeña', 'Mediana', 'Grande', 'Familiar']
+      tamanios: ['S', 'M', 'L']
     },
     {
       id: '2',
       nombre: 'Cheesecake de Maracuyá',
       categoria: 'Cheesecake y Pyes',
       precio: 80.0,
-      stock: 15,
+      stock: 0,
       imagen: 'https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234883/Cheesecake_de_Maracuy%C3%A1_knhn3w.png',
       rating: 4.9,
       resenas: 110,
       badge: 'Popular',
       descripcion: 'Refrescante cheesecake con coulis de maracuyá tropical.',
       ingredientes: ['Maracuyá', 'Queso crema', 'Galletas', 'Crema', 'Azúcar'],
-      tamanios: ['Pequeña', 'Mediana', 'Grande', 'Familiar']
+      tamanios: ['S', 'M', 'L']
+    },
+    {
+      id: '3',
+      nombre: 'Torta de Zanahoria',
+      categoria: 'Tortas',
+      precio: 65.0,
+      stock: 5,
+      imagen: 'https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234868/Torta_de_Zanahoriaa_ury5wh.png',
+      rating: 4.7,
+      resenas: 76,
+      badge: 'Favorito',
+      descripcion: 'Esponjosa torta de zanahoria con frosting de queso crema y nueces.',
+      ingredientes: ['Zanahoria', 'Harina', 'Huevos', 'Nueces', 'Queso crema'],
+      tamanios: ['S', 'M', 'L']
+    },
+    {
+      id: '4',
+      nombre: 'Torta de Vainilla',
+      categoria: 'Tortas',
+      precio: 60.0,
+      stock: 15,
+      imagen: 'https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234876/torta_de_vainilla_vgcfkf.png',
+      rating: 4.6,
+      resenas: 89,
+      badge: '',
+      descripcion: 'Clásica torta de vainilla con crema suave y decoración elegante.',
+      ingredientes: ['Vainilla', 'Harina', 'Huevos', 'Mantequilla', 'Leche'],
+      tamanios: ['S', 'M', 'L']
+    },
+    {
+      id: '5',
+      nombre: 'Torta Matrimonial',
+      categoria: 'Matrimoniales',
+      precio: 250.0,
+      stock: 2,
+      imagen: 'https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234891/Torta_Matrimonial_qhxegx.png',
+      rating: 5.0,
+      resenas: 45,
+      badge: 'Premium',
+      descripcion: 'Elegante torta matrimonial de varios pisos decorada a medida.',
+      ingredientes: ['Vainilla', 'Fondant', 'Crema', 'Flores', 'Perlas'],
+      tamanios: ['M', 'L', 'XL']
+    },
+    {
+      id: '6',
+      nombre: 'Torta de Quinceañera',
+      categoria: 'Quinceañeros',
+      precio: 200.0,
+      stock: 3,
+      imagen: 'https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234897/Torta_de_Quincea%C3%B1era_evxzmp.png',
+      rating: 4.8,
+      resenas: 62,
+      badge: 'Especial',
+      descripcion: 'Torta especial para quinceañeras con decoración rosa y detalles dorados.',
+      ingredientes: ['Vainilla', 'Fondant rosa', 'Crema', 'Flores', 'Brillantina'],
+      tamanios: ['M', 'L', 'XL']
+    },
+    {
+      id: '7',
+      nombre: 'Pie de Limón',
+      categoria: 'Cheesecake y Pyes',
+      precio: 55.0,
+      stock: 10,
+      imagen: 'https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234905/Pie_de_Lim%C3%B3n_plhcyw.png',
+      rating: 4.7,
+      resenas: 83,
+      badge: '',
+      descripcion: 'Clásico pie de limón con merengue tostado y base crocante.',
+      ingredientes: ['Limón', 'Huevos', 'Azúcar', 'Galletas', 'Mantequilla'],
+      tamanios: ['S', 'M', 'L']
+    },
+    {
+      id: '8',
+      nombre: 'Red Velvet',
+      categoria: 'Tortas Especiales',
+      precio: 90.0,
+      stock: 8,
+      imagen: 'https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234910/Red_Velvet_da5fqq.png',
+      rating: 4.9,
+      resenas: 137,
+      badge: 'Top',
+      descripcion: 'Irresistible red velvet con frosting de queso crema y color rojo intenso.',
+      ingredientes: ['Cacao', 'Colorante rojo', 'Queso crema', 'Harina', 'Buttermilk'],
+      tamanios: ['S', 'M', 'L']
+    },
+    {
+      id: '9',
+      nombre: 'Tres Leches',
+      categoria: 'Tortas',
+      precio: 70.0,
+      stock: 14,
+      imagen: 'https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234917/Tres_Leches_d8lm11.png',
+      rating: 4.8,
+      resenas: 91,
+      badge: 'Nuevo',
+      descripcion: 'Esponjoso bizcocho empapado en tres tipos de leche con crema chantilly.',
+      ingredientes: ['Leche condensada', 'Leche evaporada', 'Crema', 'Huevos', 'Harina'],
+      tamanios: ['S', 'M', 'L']
+    },
+    {
+      id: '10',
+      nombre: 'Torta de Frutos del Bosque',
+      categoria: 'Tortas Especiales',
+      precio: 95.0,
+      stock: 6,
+      imagen: 'https://res.cloudinary.com/ddfzttgyr/image/upload/v1774234923/Torta_de_Frutos_del_Bosque_sfpmtk.png',
+      rating: 4.8,
+      resenas: 72,
+      badge: 'Nuevo',
+      descripcion: 'Exquisita torta con mix de frutos del bosque frescos y crema.',
+      ingredientes: ['Frutos del bosque', 'Crema', 'Harina', 'Huevos', 'Azúcar'],
+      tamanios: ['S', 'M', 'L']
     }
   ];
 
@@ -64,6 +176,7 @@ export class ProductsService {
   loadProducts(): void {
     this.isLoading.set(true);
     this.http.get<any[]>(this.baseUrl).pipe(
+      timeout(3500),
       map(data => data.map(item => ({
         id: item.id.toString(),
         nombre: item.nombre || '',
@@ -87,7 +200,15 @@ export class ProductsService {
         return of(optimizedMock);
       })
     ).subscribe(list => {
-      this.products.set(list);
+      if (list && list.length > 0) {
+        this.products.set(list);
+      } else {
+        const optimizedMock = this.mockCatalog.map(m => ({
+          ...m,
+          imagen: this.optimizeCloudinaryUrl(m.imagen)
+        }));
+        this.products.set(optimizedMock);
+      }
       this.isLoading.set(false);
     });
   }

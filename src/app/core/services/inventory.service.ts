@@ -152,6 +152,9 @@ export class InventoryService {
           const cleanedBackend = backendItems.map(i => ({ ...i, id: i.id.replace(/^INV-/, '') }));
           this.inventoryItems.set(cleanedBackend);
           this.saveItemsToStorage();
+        } else {
+          this.inventoryItems.set(this.mockInitialItems);
+          this.saveItemsToStorage();
         }
         this.isLoading.set(false);
       }),

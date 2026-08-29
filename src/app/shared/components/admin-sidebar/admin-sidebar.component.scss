@@ -1,11 +1,15 @@
 :host {
   display: block;
-  height: 100%;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  align-self: flex-start;
+  z-index: 100;
 }
 
 .admin-sidebar {
   width: 250px;
-  min-height: 100vh;
+  height: 100%;
   background: #1E293B; /* Tono profesional oscuro (Slate 800) */
   color: #FFFFFF;
   padding: 1.25rem 0.85rem;
@@ -13,6 +17,7 @@
   flex-direction: column;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-y: auto;
 }
 
 .sidebar-logo {

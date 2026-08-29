@@ -47,6 +47,16 @@
 
 // 1.5 ADMIN THEME OVERRIDES (Professional & Corporate)
 .admin-layout {
+  display: flex !important;
+  min-height: 100vh !important;
+  width: 100% !important;
+
+  .admin-content-area {
+    flex: 1 !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+  }
+
   // Overriding global variables specifically for the admin context
   --font-primary: 'Inter', sans-serif;
 

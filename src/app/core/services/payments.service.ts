@@ -74,6 +74,9 @@ export class PaymentsService {
         if (remote && remote.length > 0) {
           this.payments.set(remote);
           this.saveToStorage();
+        } else {
+          this.payments.set(this.initialPayments);
+          this.saveToStorage();
         }
         this.isLoading.set(false);
       }),

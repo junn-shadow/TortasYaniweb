@@ -72,6 +72,9 @@ export class PurchasesService {
         if (remote && remote.length > 0) {
           this.purchases.set(remote);
           this.saveToStorage();
+        } else {
+          this.purchases.set(this.initialPurchases);
+          this.saveToStorage();
         }
         this.isLoading.set(false);
       }),

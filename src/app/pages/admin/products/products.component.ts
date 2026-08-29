@@ -1,7 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { ProductsService } from '../../../core/services/products.service';
 import { CloudinaryService } from '../../../core/services/cloudinary.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -11,7 +10,7 @@ import { AdminSidebarComponent } from '../../../shared/components/admin-sidebar/
 @Component({
   selector: 'app-admin-products',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, AdminSidebarComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, AdminSidebarComponent],
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss'
 })

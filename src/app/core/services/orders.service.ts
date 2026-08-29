@@ -95,6 +95,9 @@ export class OrdersService {
         if (remote && remote.length > 0) {
           this.orders.set(remote);
           this.saveToStorage();
+        } else {
+          this.orders.set(this.initialOrders);
+          this.saveToStorage();
         }
         this.isLoading.set(false);
       }),

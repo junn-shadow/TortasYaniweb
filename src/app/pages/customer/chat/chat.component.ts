@@ -102,12 +102,12 @@ export class ChatComponent implements AfterViewChecked {
     this.isLoading = true;
 
     this.chatService.sendMessage(text).subscribe({
-      next: (reply) => {
+      next: (reply: string) => {
         this.isLoading = false;
         this.isSending = false;
         this.processResponse(reply);
       },
-      error: (err) => {
+      error: (err: any) => {
         this.isLoading = false;
         this.isSending = false;
         console.error('Error in chatbot communication:', err);

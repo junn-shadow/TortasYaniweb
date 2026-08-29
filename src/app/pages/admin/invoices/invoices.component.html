@@ -168,6 +168,11 @@
       </div>
 
       <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #475569;">Dirección (Opcional)</label>
+        <input type="text" [(ngModel)]="invoiceForm.direccionCliente" placeholder="Ej. Av. El Sol 123, Cusco" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+      </div>
+
+      <div>
         <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #475569;">Monto Total (S/)</label>
         <input type="number" [(ngModel)]="invoiceForm.montoTotal" placeholder="50.00" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
       </div>

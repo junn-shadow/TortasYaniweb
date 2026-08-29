@@ -28,6 +28,7 @@ export class InvoicesComponent {
     tipoDocumento: 'DNI',
     numeroDocumento: '',
     nombreCliente: '',
+    direccionCliente: '',
     montoTotal: 50.00
   };
 
@@ -231,7 +232,7 @@ export class InvoicesComponent {
             <div>
               <strong>Señor(es):</strong> ${inv.cliente}<br>
               <strong>${isFactura ? 'RUC' : 'DNI'}:</strong> ${inv.documentoCliente}<br>
-              <strong>Dirección:</strong> Cusco, Perú
+              <strong>Dirección:</strong> ${inv.direccionCliente || 'Cusco, Perú'}
             </div>
             <div style="text-align: right;">
               <strong>Fecha de Emisión:</strong> ${inv.fechaEmision.split(' ')[0]}<br>
@@ -316,6 +317,7 @@ export class InvoicesComponent {
       tipoDocumento: 'DNI',
       numeroDocumento: '',
       nombreCliente: '',
+      direccionCliente: '',
       montoTotal: 50.00
     };
     this.showInvoiceModal.set(true);
@@ -332,27 +334,21 @@ export class InvoicesComponent {
     }
 
     this.showInvoiceModal.set(false);
-    this.showToast('🚀 Generando comprobante...');
+    this.showToast('🚀 Generando comprobante simulado...');
 
-    this.invoicesService.emitirBoletaNubeFact({
-      dniCliente: this.invoiceForm.numeroDocumento,
-      nombreCliente: this.invoiceForm.nombreCliente,
-      totalVenta: this.invoiceForm.montoTotal,
-      descripcionProducto: 'Torta Especial Yani (Demo)'
-    }).subscribe({
-      next: (res) => {
-        if (res && res.enlace_del_pdf) {
-          this.showToast(`✅ ¡Comprobante emitido exitosamente!`);
-          window.open(res.enlace_del_pdf, '_blank');
-        } else if (res && res.errors) {
-          this.showToast(`❌ Error simulado de SUNAT/NubeFact`);
-        } else {
-          this.showToast('✅ Comprobante simulado con éxito.');
-        }
-      },
-      error: () => {
-        this.showToast('✅ Comprobante simulado localmente.');
-      }
+    const isFactura = this.invoiceForm.tipoDocumento === 'RUC';
+    
+    this.invoicesService.createInvoice({
+      orderId: `ORD-${Math.floor(Math.random() * 9000) + 1000}`,
+      cliente: this.invoiceForm.nombreCliente,
+      documentoCliente: this.invoiceForm.numeroDocumento,
+      direccionCliente: this.invoiceForm.direccionCliente || 'Cusco, Perú',
+      tipo: isFactura ? 'Factura' : 'Boleta',
+      fechaEmision: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      montoTotal: this.invoiceForm.montoTotal,
+      estadoSunat: 'Aceptado'
+    }).subscribe(() => {
+      this.showToast('✅ Comprobante simulado localmente con éxito.');
     });
   }
 

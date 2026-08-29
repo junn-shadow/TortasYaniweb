@@ -100,6 +100,7 @@ export interface InvoiceDoc {
   orderId: string;
   cliente: string;
   documentoCliente: string; // RUC o DNI
+  direccionCliente?: string; // Para imprimir en la factura simulada
   tipo: 'Boleta' | 'Factura' | 'Ticket' | 'Nota de Crédito';
   fechaEmision: string;
   montoTotal: number;

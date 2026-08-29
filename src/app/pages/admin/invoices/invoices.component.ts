@@ -217,7 +217,7 @@ export class InvoicesComponent {
           <div class="header">
             <div class="company-info">
               <h1>Tortas Yani</h1>
-              <p>Av. Ejemplo 123, Cusco, Perú</p>
+              <p>Plaza Túpac Amaru, Wanchaq, Cusco</p>
               <p>Teléfono: +51 919 576 034</p>
               <p>Email: ventas@tortasyani.com</p>
             </div>

@@ -1,5 +1,5 @@
 <div class="admin-layout animate-fade-in">
-  
+
   <app-admin-sidebar></app-admin-sidebar>
 
   <main class="admin-content-area">
@@ -10,7 +10,7 @@
 
     <header class="admin-topbar">
       <div class="header-title">
-        <h1>Validar Pagos & Reportes 💰</h1>
+        <h1>Validar Pagos & Reportes</h1>
         <p>Verificación de vouchers (Yape/Plin), pagos de adelantos (50%) y saldos por cobrar.</p>
       </div>
 
@@ -55,26 +55,24 @@
     <div class="controls-card card">
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input 
-          type="text" 
-          placeholder="Buscar por ID Pago, ID Orden o Cliente..." 
-          [ngModel]="searchTerm()" 
-          (ngModelChange)="searchTerm.set($event)"
-          class="form-control"
-        />
+        <input type="text" placeholder="Buscar por ID Pago, ID Orden o Cliente..." [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)" class="form-control" />
       </div>
 
       <div class="filters-group">
         <div class="date-filter">
           <label>Desde:</label>
-          <input type="date" [ngModel]="startDate()" (ngModelChange)="startDate.set($event)" class="form-control date-input" />
+          <input type="date" [ngModel]="startDate()" (ngModelChange)="startDate.set($event)"
+            class="form-control date-input" />
         </div>
         <div class="date-filter">
           <label>Hasta:</label>
-          <input type="date" [ngModel]="endDate()" (ngModelChange)="endDate.set($event)" class="form-control date-input" />
+          <input type="date" [ngModel]="endDate()" (ngModelChange)="endDate.set($event)"
+            class="form-control date-input" />
         </div>
 
-        <select [ngModel]="selectedMethod()" (ngModelChange)="selectedMethod.set($event)" class="form-control select-control">
+        <select [ngModel]="selectedMethod()" (ngModelChange)="selectedMethod.set($event)"
+          class="form-control select-control">
           <option value="TODOS">Todos los Métodos</option>
           <option value="Yape">Yape</option>
           <option value="Plin">Plin</option>
@@ -82,7 +80,8 @@
           <option value="Efectivo">Efectivo</option>
         </select>
 
-        <select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)" class="form-control select-control">
+        <select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)"
+          class="form-control select-control">
           <option value="TODOS">Todos los Estados</option>
           <option value="Aprobado">Aprobado</option>
           <option value="En revisión">En revisión</option>

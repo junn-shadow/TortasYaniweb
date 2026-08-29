@@ -221,11 +221,10 @@
     <p>Escanea el código QR desde tu celular para realizar el pago del adelanto de <strong>S/ {{ grandTotal() * 0.5 }}</strong>.</p>
     
     <div class="qr-code-placeholder">
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TortasYaniPayment" alt="QR Code Pago" class="qr-img" />
-      <span class="qr-brand-logo">{{ checkoutForm.get('metodoPago')?.value }}</span>
+      <img src="assets/images/yape_qr.png" alt="QR Code Pago" class="qr-img" />
     </div>
 
-    <p class="recipient">Titular: <strong>Tortas Yani S.A.C</strong></p>
+    <p class="recipient">Titular: <strong>Ericson David Mendoza Diaz</strong></p>
     
     <div class="alert alert-success mt-3">
       Una vez realizado el envío, presiona el botón de abajo para procesar tu orden.

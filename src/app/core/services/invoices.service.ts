@@ -61,7 +61,11 @@ export class InvoicesService {
     const saved = localStorage.getItem(this.STORAGE_KEY);
     if (saved) {
       try {
-        this.invoices.set(JSON.parse(saved));
+        let parsed: InvoiceDoc[] = JSON.parse(saved);
+        // Filtrar y eliminar automáticamente los rechazados a petición del cliente
+        parsed = parsed.filter(inv => inv.estadoSunat !== 'Rechazado');
+        this.invoices.set(parsed);
+        this.saveToStorage();
       } catch (e) {
         this.invoices.set(this.initialInvoices);
       }

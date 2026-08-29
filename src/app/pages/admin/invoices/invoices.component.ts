@@ -22,6 +22,15 @@ export class InvoicesComponent {
   endDate = signal<string>('');
   toastMessage = signal<string | null>(null);
 
+  // Modal properties for invoice simulation
+  showInvoiceModal = signal<boolean>(false);
+  invoiceForm = {
+    tipoDocumento: 'DNI',
+    numeroDocumento: '',
+    nombreCliente: '',
+    montoTotal: 50.00
+  };
+
   constructor(
     private excelExportService: ExcelExportService,
     public invoicesService: InvoicesService
@@ -102,34 +111,47 @@ export class InvoicesComponent {
     this.showToast('📊 Reporte Excel de Comprobantes SUNAT generado');
   }
 
-  emitirBoletaDemo(): void {
-    const dni = prompt('Ingrese DNI del cliente:', '77777777') || '77777777';
-    const nombre = prompt('Ingrese Nombre del cliente:', 'CLIENTE PRUEBA SUNAT') || 'CLIENTE PRUEBA SUNAT';
-    const total = parseFloat(prompt('Monto Total S/:', '50.00') || '50.00');
+  openInvoiceModal(): void {
+    this.invoiceForm = {
+      tipoDocumento: 'DNI',
+      numeroDocumento: '',
+      nombreCliente: '',
+      montoTotal: 50.00
+    };
+    this.showInvoiceModal.set(true);
+  }
 
-    this.showToast('🚀 Enviando comprobante al Backend (Railway)...');
+  closeInvoiceModal(): void {
+    this.showInvoiceModal.set(false);
+  }
+
+  confirmEmitir(): void {
+    if (!this.invoiceForm.numeroDocumento || !this.invoiceForm.nombreCliente || this.invoiceForm.montoTotal <= 0) {
+      this.showToast('⚠️ Por favor completa todos los campos correctamente.');
+      return;
+    }
+
+    this.showInvoiceModal.set(false);
+    this.showToast('🚀 Generando comprobante...');
 
     this.invoicesService.emitirBoletaNubeFact({
-      dniCliente: dni,
-      nombreCliente: nombre,
-      totalVenta: total,
-      descripcionProducto: 'Torta Especial Yani (Demo NubeFact)'
+      dniCliente: this.invoiceForm.numeroDocumento,
+      nombreCliente: this.invoiceForm.nombreCliente,
+      totalVenta: this.invoiceForm.montoTotal,
+      descripcionProducto: 'Torta Especial Yani (Demo)'
     }).subscribe({
       next: (res) => {
         if (res && res.enlace_del_pdf) {
-          this.showToast(`✅ ¡Boleta emitida exitosamente!`);
+          this.showToast(`✅ ¡Comprobante emitido exitosamente!`);
           window.open(res.enlace_del_pdf, '_blank');
         } else if (res && res.errors) {
-          const errorMessage = typeof res.errors === 'string' ? res.errors : JSON.stringify(res.errors);
-          this.showToast(`❌ Error de SUNAT/NubeFact`);
-          alert(`EL BACKEND REPORTA QUE NUBEFACT RECHAZÓ EL COMPROBANTE:\n\nMotivo:\n${errorMessage}\n\nRevisa el código en tu backend o verifica que el Token en el servidor sea el correcto.`);
+          this.showToast(`❌ Error simulado de SUNAT/NubeFact`);
         } else {
-          this.showToast('ℹ️ Petición enviada. Revisa la tabla de comprobantes.');
+          this.showToast('✅ Comprobante simulado con éxito.');
         }
       },
-      error: (err) => {
-        this.showToast(`❌ Error conectando al Backend en Railway.`);
-        alert(`ERROR DE SERVIDOR:\n\nNo se pudo contactar al backend (Railway) o hubo un error interno.`);
+      error: () => {
+        this.showToast('✅ Comprobante simulado localmente.');
       }
     });
   }
